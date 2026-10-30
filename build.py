@@ -9,5 +9,5 @@ for f in sorted((S/'pagine').glob('*.html')):
     h=testata
     for k in('beni','come','assistenza','servizi','bollettino','chi'):h=h.replace('{{a_%s}}'%k,' aria-current="page"' if meta.get('attivo')==k else '')
     nome=f.stem;url='/' if nome=='index' else '/%s/'%nome
-    out=mod.replace('{{titolo}}',meta['titolo']).replace('{{descrizione}}',meta['descrizione']).replace('{{url}}','https://cronoaste.cloud'+url).replace('{{testata}}',h).replace('{{corpo}}',corpo).replace('{{pie}}',pie)
+    out=mod.replace('{{titolo}}',meta['titolo']).replace('{{descrizione}}',meta['descrizione']).replace('{{url}}','https://cronoaste.cloud'+url).replace('{{testata}}',h).replace('{{css}}',''.join('<link rel="stylesheet" href="%s">'%c for c in meta.get('css','').split() ) ).replace('{{js}}',''.join('<script src="%s" defer></script>'%j for j in meta.get('js','').split())).replace('{{corpo}}',corpo).replace('{{pie}}',pie)
     d=P if nome=='index' else P/nome;d.mkdir(exist_ok=True);(d/'index.html').write_text(out);print('ok',url)

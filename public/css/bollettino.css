@@ -1,0 +1,23 @@
+/* Pagina Bollettino */
+.bl-list{list-style:none;margin:0 auto;padding:0;max-width:420px;text-align:left;font-size:14px;line-height:1.45}
+.bl-list li{position:relative;padding:3px 0 3px 26px}
+.bl-list li:before{content:"\2713";position:absolute;left:4px;top:3px;color:var(--verde);font-weight:700}
+.bl-box{background:#fff;border:1px solid var(--bordo);border-radius:var(--raggio);padding:16px 8px;max-width:760px;margin:0 auto}
+#ca-arch{max-width:none}
+.bl-box h2{font-size:18px;text-align:center}
+.bl-box p{font-size:13px;line-height:1.5;color:var(--grigio);margin:6px 8px 0}
+.bl-box iframe{display:block;width:100%;max-width:100%;border:0;height:900px}
+@media(min-width:760px){.bl-box{padding:22px}.bl-box iframe{height:760px}}
+#ca-arch{color:#14325c}
+#ca-arch a{color:inherit;text-decoration:none}
+#ca-arch button{font-family:inherit;cursor:pointer}
+#ca-arch .ca-btn{display:inline-block;border:1px solid #dde5ee;background:#fff;color:#14325c;font-size:14px;font-weight:600;padding:10px 14px;border-radius:999px;min-height:40px}
+#ca-arch .ca-btn:disabled{opacity:.4;cursor:default}
+#ca-arch .ca-pri{background:#14325c;border-color:#14325c;color:#fff}
+#ca-arch .ca-btn:not(:disabled):hover{border-color:#0f9d94}
+#ca-arch .ca-card{border:1px solid #dde5ee;border-radius:14px;background:#fff;padding:16px 18px;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px}
+#ca-arch .ca-row{display:flex;gap:12px;align-items:center;padding:10px 0;border-top:1px solid #e3eaf2}
+#ca-arch .ca-img{width:56px;height:56px;flex:none;border-radius:8px;background:#e8ecf0;object-fit:cover;display:block}
+#ca-arch .ca-tag{display:inline-block;font-size:11px;font-weight:700;color:#fff;background:#14325c;border-radius:999px;padding:2px 8px;margin-right:6px}
+#ca-arch .ca-bar{display:flex;align-items:center;justify-content:center;gap:10px;margin-top:14px;font-size:14px;color:#5a6b82}
+#ca-arch .ca-bar input{width:52px;text-align:center;border:1px solid #dde5ee;border-radius:8px;padding:8px 4px;font-size:14px;font-family:inherit;color:#14325c}
