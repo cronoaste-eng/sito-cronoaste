@@ -41,3 +41,4 @@
 #ca-beni .ca-msg{color:var(--ca-mut);padding:20px 0}
 @container (min-width:560px){#ca-beni .ca-grid{grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:18px}#ca-beni .ca-b{padding:14px 16px 16px;gap:8px}#ca-beni .ca-t{font-size:16px;-webkit-line-clamp:3;min-height:3.9em}#ca-beni .ca-p span{font-size:13px}#ca-beni .ca-p b{font-size:20px}}
 @container (max-width:420px){#ca-beni .ca-tx{display:none}#ca-beni .ca-pag{gap:6px;margin-top:16px;flex-wrap:nowrap;font-size:13px}#ca-beni .ca-pb{padding:10px 14px}#ca-beni .ca-go{gap:4px}#ca-beni .ca-go input{width:50px;padding:8px 2px}#ca-beni .ca-tab{padding:10px 12px;font-size:15px}#ca-beni input[type=search]{width:100%}}
+#ca-beni[data-home]{min-height:0;padding-bottom:0}

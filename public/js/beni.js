@@ -5,10 +5,11 @@
   var PIATTAFORMA='https://cronoaste.fallcoaste.it';
   var root=document.getElementById('ca-beni');
   if(!root)return;
+  var HOME=root.hasAttribute('data-home');
   var st={tab:'attivi',trib:'Tutti',q:'',ord:'nuovi',n:0,attivi:null,archivio:null,err:{},live:{}};
   function per(){var w=root.clientWidth||320;if(w<560)return 10;var c=Math.max(2,Math.floor((w+18)/278));return c*2}
-  try{var sv=JSON.parse(sessionStorage.getItem('ca_st')||'null');if(sv&&typeof sv==='object'){if(sv.tab==='attivi'||sv.tab==='archivio')st.tab=sv.tab;if(typeof sv.trib==='string')st.trib=sv.trib.slice(0,60);if(typeof sv.q==='string')st.q=sv.q.slice(0,80);if(typeof sv.ord==='string')st.ord=sv.ord;if(typeof sv.n==='number'&&sv.n>=0&&sv.n<1000)st.n=Math.floor(sv.n)}}catch(x){}
-  function salva(){try{sessionStorage.setItem('ca_st',JSON.stringify({tab:st.tab,trib:st.trib,q:st.q,ord:st.ord,n:st.n}))}catch(x){}}
+  if(!HOME)try{var sv=JSON.parse(sessionStorage.getItem('ca_st')||'null');if(sv&&typeof sv==='object'){if(sv.tab==='attivi'||sv.tab==='archivio')st.tab=sv.tab;if(typeof sv.trib==='string')st.trib=sv.trib.slice(0,60);if(typeof sv.q==='string')st.q=sv.q.slice(0,80);if(typeof sv.ord==='string')st.ord=sv.ord;if(typeof sv.n==='number'&&sv.n>=0&&sv.n<1000)st.n=Math.floor(sv.n)}}catch(x){}
+  function salva(){if(HOME)return;try{sessionStorage.setItem('ca_st',JSON.stringify({tab:st.tab,trib:st.trib,q:st.q,ord:st.ord,n:st.n}))}catch(x){}}
   function okurl(u){u=String(u==null?'':u);return /^https:\/\/[^\s"'<>]+$/.test(u)?u:''}
   function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
   function euro(n){if(n==null)return '—';var p=Number(n).toFixed(2).split('.');return p[0].replace(/\B(?=(\d{3})+(?!\d))/g,'.')+','+p[1]}
@@ -76,7 +77,13 @@
     var righe=old?'<span>Conclusa il '+esc(giorno(l.termine))+'</span>':'<span>Inizio asta: '+esc(l.inizio)+'</span>'+dep(l);
     return '<a class="ca-card'+(old?' ca-old':'')+'" data-id="'+esc(l.id)+'" data-bl="'+esc(lab)+'" data-bv="€ '+euro(prezzo)+'" data-tr="'+esc(l.tribunale||'')+'" data-pr="'+esc(l.procedura||'')+'" href="'+esc(okurl(l.url)||PIATTAFORMA)+'" target="_blank" rel="noopener"><div class="ca-ph">'+(okurl(l.foto)?'<img loading="lazy" src="'+esc(okurl(l.foto))+'" alt="">':'')+'<span class="ca-tag">Trib. '+esc(l.tribunale||'—')+'</span>'+esito+'<span class="ca-live"><i></i>Asta in corso</span></div><div class="ca-b"><div class="ca-meta">Proc. n. '+esc(l.procedura)+' · '+esc(l.tipo)+'</div><h3 class="ca-t">'+esc(l.titolo)+'</h3><div class="ca-d">'+righe+'</div><div class="ca-p"><span class="ca-pl">'+esc(lab)+'</span><b class="ca-pv">€ '+euro(prezzo)+'</b></div></div></a>';
   }
+  function disegnaHome(){
+    if(!st.attivi){root.innerHTML=st.err.attivi?'<p class="ca-msg">Non riusciamo a mostrare i beni in questo momento. <a href="'+PIATTAFORMA+'" target="_blank" rel="noopener">Vedi i beni sulla piattaforma vendite</a>.</p>':'<p class="ca-msg">Caricamento dei beni\u2026</p>';return}
+    var n=root.clientWidth<560?4:6;st.ord='nuovi';
+    root.innerHTML='<div class="ca-grid">'+filtrati().slice(0,n).map(card).join('')+'</div>';applicaLive();
+  }
   function disegna(){
+    if(HOME){disegnaHome();return}
     var dati=lista(),tabs='<div class="ca-tabs" role="tablist"><button type="button" role="tab" class="ca-tab" data-k="attivi" aria-selected="'+(st.tab==='attivi')+'">In vendita'+(st.attivi?' ('+st.attivi.filter(function(l){return !chiusa(l)}).length+')':'')+'</button><button type="button" role="tab" class="ca-tab" data-k="archivio" aria-selected="'+(st.tab==='archivio')+'">Archivio vendite concluse'+(st.archivio?' ('+st.archivio.length+')':'')+'</button></div>';
     if(!dati){
       root.innerHTML=tabs+(st.err[st.tab]?'<p class="ca-msg">Non riusciamo a mostrare i beni in questo momento. <a href="'+PIATTAFORMA+'" target="_blank" rel="noopener">Vedi tutti i beni sulla piattaforma vendite</a>.</p>':'<p class="ca-msg">Caricamento dei beni…</p>');
@@ -129,5 +136,5 @@
   var ultimo=per();window.addEventListener('resize',function(){if(per()!==ultimo){ultimo=per();disegna()}});
   disegna();
   caricaLive(true);setInterval(caricaLive,30000);document.addEventListener('visibilitychange',function(){if(!document.hidden)caricaLive(true)});
-  carica('attivi','lotti.json').then(function(){disegna();carica('archivio','archivio.json').then(function(){if(st.tab==='archivio'||st.archivio)disegna()})});
+  carica('attivi','lotti.json').then(function(){disegna();if(HOME)return;carica('archivio','archivio.json').then(function(){if(st.tab==='archivio'||st.archivio)disegna()})});
 })();
