@@ -7,7 +7,7 @@
 <link rel="icon" href="/immagini/favicon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700;800&display=swap">
-<link rel="stylesheet" href="/css/stile.css">
+<link rel="stylesheet" href="/css/stile.css"><link rel="stylesheet" href="/css/consenso.css">
 <link rel="stylesheet" href="/css/pagine.css">
 </head><body>
 <a class="salta" href="#principale">Vai al contenuto</a>
@@ -70,6 +70,19 @@
 <p>In base alla procedura si possono concordare servizi aggiuntivi, preventivati caso per caso: identificazione del notaio rogante, montaggi video, reportage fotografici, tour virtuali a 360&deg;, redazione dell'inventario, gestione delle visite, acquisto del contributo unificato telematico.</p>
 <div class="evid"><b>Importante</b><span>Crono Aste preventiva il costo dei servizi dopo aver analizzato la documentazione dei beni da porre in vendita. I servizi variano in base al Tribunale e alla procedura: ti invitiamo a contattarci per informazioni specifiche.</span></div>
 </div></div></section>
+<section id="richiesta"><div class="contenitore"><div class="testo" style="margin-bottom:14px"><h2>Richiedi informazioni</h2><p>Sei un professionista? Descrivi la procedura e ti ricontattiamo per un preventivo.</p></div>
+<form class="modulo" data-modulo method="post" action="/api/modulo" novalidate>
+<input type="hidden" name="tipo" value="professionista"><input type="hidden" name="t0" value="">
+<div class="trappola" aria-hidden="true"><label>Non compilare<input type="text" name="sito_web" tabindex="-1" autocomplete="off"></label></div>
+<div class="due"><label>Nome e cognome *<input type="text" name="nome" required autocomplete="name"></label><label>Email *<input type="email" name="email" required autocomplete="email"></label></div>
+<label>Telefono<input type="tel" name="telefono" autocomplete="tel"></label>
+<div class="due"><label>Ruolo<select name="ruolo"><option>Curatore</option><option>Delegato alla vendita</option><option>Liquidatore</option><option>Custode</option><option>Altro</option></select></label><label>Tribunale<input type="text" name="tribunale"></label></div>
+<label>Procedura (numero e tipo)<input type="text" name="procedura"></label>
+<label>Messaggio *<textarea name="messaggio" required></textarea></label>
+<label class="cons"><input type="checkbox" name="consenso" value="si" required><span>Ho letto l'<a href="/privacy-policy/" target="_blank">informativa privacy</a> e acconsento al trattamento dei miei dati per rispondere alla richiesta.</span></label>
+<button class="btn verde" type="submit">Invia la richiesta</button><p class="esito" role="status" aria-live="polite"></p>
+</form>
+</div></section>
 <section><div class="contenitore"><div class="fascia">
 <h2>Contattaci</h2><p>Per maggiori informazioni o assistenza.</p>
 <div class="azioni"><a class="btn verde" href="tel:+393501389723">Chiama</a><a class="btn vuoto" href="https://wa.me/393501389723" rel="noopener">WhatsApp</a><a class="btn vuoto" href="mailto:info@cronoaste.it">Email</a></div>
@@ -83,9 +96,9 @@
 <div><h3>Sede legale</h3><p>Corso Italia, 113<br>95129 Catania<br>C.F. e P.IVA 05813980876<br>REA CT - 435843</p></div>
 <div><h3>Seguici</h3><ul><li><a href="https://www.facebook.com/cronoaste.it" rel="noopener">Facebook</a></li><li><a href="https://instagram.com/cronoaste" rel="noopener">Instagram</a></li><li><a href="https://www.linkedin.com/company/71562161/" rel="noopener">LinkedIn</a></li><li><a href="https://www.youtube.com/channel/UCfoQ80__B5P87aFhfKRvVzA" rel="noopener">YouTube</a></li><li><a href="https://whatsapp.com/channel/0029Vb93CjY6WaKkaRJIit1C" rel="noopener">Canale WhatsApp</a></li></ul></div>
 </div>
-<div class="legale"><span>&copy; 2021 - 2026 Crono Aste S.r.l. - Diritti riservati.</span><span><a href="/privacy-policy/">Privacy Policy</a> &middot; <a href="/condizioni-generali/">Condizioni Generali</a></span></div>
+<div class="legale"><span>&copy; 2021 - 2026 Crono Aste S.r.l. - Diritti riservati.</span><span><a href="/video-tutorial/">Video tutorial</a> &middot; <a href="/lavora-con-noi/">Lavora con noi</a> &middot; <a href="/privacy-policy/">Privacy Policy</a> &middot; <a href="/cookie-policy/">Cookie Policy</a> &middot; <a href="/condizioni-generali/">Condizioni Generali</a> &middot; <a href="#" data-gestisci-cookie>Gestisci cookie</a></span></div>
 </div></footer>
 
-<script src="/js/sito.js" defer></script>
-
+<script src="/js/sito.js" defer></script><script src="/js/consenso.js" defer></script>
+<script src="/js/moduli.js" defer></script>
 </body></html>

@@ -1,0 +1,20 @@
+---
+titolo: Richiedi assistenza - Crono Aste S.r.l.
+descrizione: Scrivici per ricevere assistenza gratuita su registrazione, offerta e beni delle vendite gestite da Crono Aste.
+attivo: assistenza
+css: /css/pagine.css
+js: /js/moduli.js
+---
+<section class="eroe"><div class="contenitore"><h1>Richiedi assistenza</h1><p class="sotto">Compila il modulo: ti rispondiamo dal luned&igrave; al venerd&igrave;, 9:00 - 19:00. Per le vendite gestite da noi l'assistenza &egrave; gratuita. Se preferisci, <a href="tel:+393501389723">chiama</a> o scrivi su <a href="https://wa.me/393501389723" rel="noopener">WhatsApp</a>.</p></div></section>
+<section><div class="contenitore">
+<form class="modulo" data-modulo method="post" action="/api/modulo" novalidate>
+<input type="hidden" name="tipo" value="assistenza"><input type="hidden" name="t0" value="">
+<div class="trappola" aria-hidden="true"><label>Non compilare<input type="text" name="sito_web" tabindex="-1" autocomplete="off"></label></div>
+<div class="due"><label>Nome e cognome *<input type="text" name="nome" required autocomplete="name"></label><label>Email *<input type="email" name="email" required autocomplete="email"></label></div>
+<label>Telefono<input type="tel" name="telefono" autocomplete="tel"></label>
+<label>Argomento<select name="argomento"><option>Registrazione al portale</option><option>Presentare un'offerta</option><option>Informazioni su un bene</option><option>Altro</option></select></label>
+<label>Messaggio *<textarea name="messaggio" required></textarea></label>
+<label class="cons"><input type="checkbox" name="consenso" value="si" required><span>Ho letto l'<a href="/privacy-policy/" target="_blank">informativa privacy</a> e acconsento al trattamento dei miei dati per rispondere alla richiesta.</span></label>
+<button class="btn verde" type="submit">Invia la richiesta</button><p class="esito" role="status" aria-live="polite"></p>
+</form>
+</div></section>

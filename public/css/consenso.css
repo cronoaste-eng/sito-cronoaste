@@ -1,0 +1,6 @@
+#cc{position:fixed;left:0;right:0;bottom:0;z-index:100;background:#fff;border-top:1px solid var(--bordo);box-shadow:0 -6px 24px rgba(20,50,92,.15)}
+#cc .cc-in{max-width:var(--max);margin:0 auto;padding:14px 16px;display:flex;flex-direction:column;gap:10px}
+#cc p{margin:0;font-size:13px;color:var(--testo)}
+#cc .cc-det{display:flex;flex-direction:column;gap:6px;font-size:13px}#cc .cc-det[hidden]{display:none}
+#cc .cc-az{display:flex;flex-wrap:wrap;gap:8px}#cc .cc-az .btn{flex:1 1 90px;text-align:center;padding:10px 12px;cursor:pointer}
+@media(min-width:760px){#cc .cc-in{flex-direction:row;align-items:center;flex-wrap:wrap}#cc p{flex:1 1 420px}#cc .cc-az{flex:0 0 auto}#cc .cc-det{flex:1 1 100%;flex-direction:row;gap:18px}}

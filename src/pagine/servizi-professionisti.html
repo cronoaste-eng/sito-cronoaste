@@ -3,6 +3,7 @@ titolo: Servizi per professionisti e tribunali - Crono Aste S.r.l.
 descrizione: Servizi di Crono Aste per curatori, commissari e delegati: vendite competitive telematiche per beni mobili e immobili, pubblicita, Gestore della Vendita Telematica (PDG n. 80).
 attivo: servizi
 css: /css/pagine.css
+js: /js/moduli.js
 ---
 <section class="eroe"><div class="contenitore">
 <h1>Servizi per professionisti e tribunali</h1>
@@ -49,6 +50,19 @@ css: /css/pagine.css
 <p>In base alla procedura si possono concordare servizi aggiuntivi, preventivati caso per caso: identificazione del notaio rogante, montaggi video, reportage fotografici, tour virtuali a 360&deg;, redazione dell'inventario, gestione delle visite, acquisto del contributo unificato telematico.</p>
 <div class="evid"><b>Importante</b><span>Crono Aste preventiva il costo dei servizi dopo aver analizzato la documentazione dei beni da porre in vendita. I servizi variano in base al Tribunale e alla procedura: ti invitiamo a contattarci per informazioni specifiche.</span></div>
 </div></div></section>
+<section id="richiesta"><div class="contenitore"><div class="testo" style="margin-bottom:14px"><h2>Richiedi informazioni</h2><p>Sei un professionista? Descrivi la procedura e ti ricontattiamo per un preventivo.</p></div>
+<form class="modulo" data-modulo method="post" action="/api/modulo" novalidate>
+<input type="hidden" name="tipo" value="professionista"><input type="hidden" name="t0" value="">
+<div class="trappola" aria-hidden="true"><label>Non compilare<input type="text" name="sito_web" tabindex="-1" autocomplete="off"></label></div>
+<div class="due"><label>Nome e cognome *<input type="text" name="nome" required autocomplete="name"></label><label>Email *<input type="email" name="email" required autocomplete="email"></label></div>
+<label>Telefono<input type="tel" name="telefono" autocomplete="tel"></label>
+<div class="due"><label>Ruolo<select name="ruolo"><option>Curatore</option><option>Delegato alla vendita</option><option>Liquidatore</option><option>Custode</option><option>Altro</option></select></label><label>Tribunale<input type="text" name="tribunale"></label></div>
+<label>Procedura (numero e tipo)<input type="text" name="procedura"></label>
+<label>Messaggio *<textarea name="messaggio" required></textarea></label>
+<label class="cons"><input type="checkbox" name="consenso" value="si" required><span>Ho letto l'<a href="/privacy-policy/" target="_blank">informativa privacy</a> e acconsento al trattamento dei miei dati per rispondere alla richiesta.</span></label>
+<button class="btn verde" type="submit">Invia la richiesta</button><p class="esito" role="status" aria-live="polite"></p>
+</form>
+</div></section>
 <section><div class="contenitore"><div class="fascia">
 <h2>Contattaci</h2><p>Per maggiori informazioni o assistenza.</p>
 <div class="azioni"><a class="btn verde" href="tel:+393501389723">Chiama</a><a class="btn vuoto" href="https://wa.me/393501389723" rel="noopener">WhatsApp</a><a class="btn vuoto" href="mailto:info@cronoaste.it">Email</a></div>
