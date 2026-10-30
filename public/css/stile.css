@@ -1,0 +1,57 @@
+/* Crono Aste - design system (30 ott 2026) */
+:root{--blu:#14325c;--verde:#0f9d94;--bordo:#dde5ee;--grigio:#5a6b82;--testo:#10243e;--sfondo:#f6f9fc;--bianco:#fff;--raggio:14px;--max:1120px}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+body{margin:0;font-family:'Open Sans',system-ui,-apple-system,'Segoe UI',sans-serif;color:var(--testo);background:var(--bianco);line-height:1.55;font-size:16px}
+img{max-width:100%;display:block}
+a{color:var(--blu)}
+.contenitore{max-width:var(--max);margin:0 auto;padding:0 16px}
+h1,h2,h3{font-family:Georgia,'Times New Roman',serif;color:var(--blu);text-transform:uppercase;letter-spacing:.02em;line-height:1.2;margin:0 0 10px}
+h1{font-size:28px}h2{font-size:22px}h3{font-size:17px}
+.sopra{font-size:12px;font-weight:600;color:var(--grigio);text-align:center;margin:0 0 8px}
+.sotto{color:var(--grigio);text-align:center;max-width:620px;margin:0 auto 18px}
+.centro{text-align:center}
+section{padding:28px 0}
+.salta{position:absolute;left:-999px}.salta:focus{left:8px;top:8px;background:#fff;padding:8px;z-index:99}
+/* testata */
+.testata{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.97);border-bottom:1px solid var(--bordo)}
+.testata .contenitore{display:flex;align-items:center;justify-content:space-between;height:68px}
+.marchio img{height:58px;width:auto}
+.menu{display:none;list-style:none;margin:0;padding:0;gap:4px}
+.menu a{display:block;padding:8px 10px;font-size:13px;font-weight:600;color:var(--blu);text-decoration:none;border-radius:999px;white-space:nowrap}
+.menu a:hover,.menu a[aria-current=page]{background:#eaf3f4;color:var(--verde)}
+.hamb{background:none;border:1px solid var(--bordo);border-radius:10px;width:44px;height:44px;font-size:22px;color:var(--blu);cursor:pointer}
+.menu.aperto{display:block;position:absolute;left:0;right:0;top:68px;background:#fff;border-bottom:1px solid var(--bordo);padding:8px 16px 14px}
+.menu.aperto a{padding:12px 8px;font-size:16px;border-radius:10px}
+@media(min-width:980px){.menu{display:flex}.hamb{display:none}}
+/* bottoni */
+.btn{display:inline-block;padding:12px 22px;border-radius:999px;font-weight:700;font-size:15px;text-decoration:none;border:2px solid var(--blu);background:var(--blu);color:#fff;cursor:pointer}
+.btn:hover{background:#0e2644}
+.btn.verde{background:var(--verde);border-color:var(--verde)}.btn.verde:hover{background:#0b857d}
+.btn.vuoto{background:#fff;color:var(--blu)}.btn.vuoto:hover{background:#eef3f8}
+.azioni{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:16px}
+/* schede */
+.griglia{display:grid;gap:16px;grid-template-columns:minmax(0,1fr)}
+@media(min-width:640px){.griglia.due,.griglia.quattro{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(min-width:980px){.griglia.quattro{grid-template-columns:repeat(4,minmax(0,1fr))}.griglia.tre{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.scheda{background:#fff;border:1px solid var(--bordo);border-radius:var(--raggio);overflow:hidden;display:flex;flex-direction:column;text-decoration:none;color:inherit}
+a.scheda:hover{border-color:var(--verde);box-shadow:0 6px 18px rgba(20,50,92,.08)}
+.scheda img{width:100%;height:150px;object-fit:cover;background:#eef3f8}
+.scheda .corpo{padding:14px 16px 18px}
+.scheda h3{margin:0 0 6px}.scheda p{margin:0;color:var(--grigio);font-size:14px}
+.distintivo{display:flex;gap:12px;align-items:flex-start;background:var(--sfondo);border:1px solid var(--bordo);border-radius:var(--raggio);padding:14px 16px}
+.distintivo b{color:var(--blu);display:block;font-size:13px;text-transform:uppercase;letter-spacing:.04em}
+.distintivo span{font-size:14px;color:var(--grigio)}
+.fascia{background:var(--blu);color:#fff;border-radius:var(--raggio);padding:24px 18px;text-align:center}
+.fascia h2{color:#fff}.fascia p{color:#cfe0f2;margin:0 auto 6px;max-width:560px}
+.eroe{padding:36px 0 12px;text-align:center}
+.eroe h1{font-size:30px}
+@media(min-width:760px){h1,.eroe h1{font-size:38px}h2{font-size:26px}section{padding:40px 0}}
+/* pie */
+.pie{background:#0b1f47;color:#cfe0f2;margin-top:36px;padding:30px 0 18px;font-size:14px}
+.pie a{color:#fff;text-decoration:none}.pie a:hover{text-decoration:underline}
+.pie h3{color:#fff;font-size:13px}
+.pie .griglia{gap:22px}
+@media(min-width:760px){.pie .griglia{grid-template-columns:1.2fr 1fr 1fr 1fr}}
+.pie ul{list-style:none;margin:0;padding:0}.pie li{margin:0 0 4px}
+.pie .legale{border-top:1px solid #234473;margin-top:20px;padding-top:12px;font-size:12px;display:flex;flex-wrap:wrap;gap:8px 18px;justify-content:space-between}
