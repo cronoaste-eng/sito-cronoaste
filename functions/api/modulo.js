@@ -1,5 +1,5 @@
 // Cloudflare Pages Function: riceve i moduli del sito e li invia per email con Brevo.
-// Variabili segrete (Cloudflare > Settings > Variables and Secrets): BREVO_API_KEY (obbligatoria).
+// Variabili segrete (Cloudflare > Settings > Variables and Secrets): BREVO_API_KEY_2 (obbligatoria; se assente si usa BREVO_API_KEY).
 // Facoltative: MAIL_TO (default info@cronoaste.it), MAIL_FROM (mittente verificato in Brevo, default info@cronoaste.it).
 const TIPI = {
   assistenza: 'Richiesta di assistenza',
@@ -42,12 +42,13 @@ export async function onRequestPost({ request, env }) {
     for (let i = 0; i < buf.length; i += 0x8000) bin += String.fromCharCode.apply(null, buf.subarray(i, i + 0x8000));
     allegato = [{ name: ('curriculum-' + nome.replace(/[^\w]+/g, '-').slice(0, 40) + '.' + ext), content: btoa(bin) }];
   } else if (tipo === 'candidatura') return risp(false, 'Allega il curriculum (PDF o Word).');
-  if (!env.BREVO_API_KEY) return risp(false, 'Servizio non ancora attivo. Scrivici a info@cronoaste.it.', 503);
+  const chiave = env.BREVO_API_KEY_2 || env.BREVO_API_KEY;
+  if (!chiave) return risp(false, 'Servizio non ancora attivo. Scrivici a info@cronoaste.it.', 503);
   const righe = [['Nome', nome], ['Email', email], ['Telefono', tel || '-']].concat(extra.map(([k, v]) => [k[0].toUpperCase() + k.slice(1), v]));
   const html = '<h3>' + esc(TIPI[tipo]) + '</h3><table cellpadding="4">' + righe.map(([k, v]) => '<tr><td><b>' + esc(k) + '</b></td><td>' + esc(v) + '</td></tr>').join('') + '</table>' + (msg ? '<p><b>Messaggio</b><br>' + esc(msg).replace(/\n/g, '<br>') + '</p>' : '') + '<p style="color:#888">Inviato dal modulo del sito. Consenso privacy dato.</p>';
   const corpo = { sender: { name: 'Sito Crono Aste', email: env.MAIL_FROM || 'info@cronoaste.it' }, to: [{ email: env.MAIL_TO || 'info@cronoaste.it' }], replyTo: { email, name: nome }, subject: TIPI[tipo] + ' - ' + nome, htmlContent: html };
   if (allegato) corpo.attachment = allegato;
-  const r = await fetch('https://api.brevo.com/v3/smtp/email', { method: 'POST', headers: { 'api-key': env.BREVO_API_KEY, 'content-type': 'application/json', accept: 'application/json' }, body: JSON.stringify(corpo) });
+  const r = await fetch('https://api.brevo.com/v3/smtp/email', { method: 'POST', headers: { 'api-key': chiave, 'content-type': 'application/json', accept: 'application/json' }, body: JSON.stringify(corpo) });
   if (!r.ok) return risp(false, 'Invio non riuscito. Scrivici a info@cronoaste.it.', 502);
   return risp(true, 'Grazie, abbiamo ricevuto la richiesta. Ti rispondiamo al piu\' presto.');
 }
