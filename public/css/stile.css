@@ -31,7 +31,7 @@ section{padding:28px 0}
 /* bottoni */
 .btn{display:inline-block;padding:12px 22px;border-radius:999px;font-weight:700;font-size:15px;text-decoration:none;border:2px solid var(--blu);background:var(--blu);color:#fff;cursor:pointer}
 .btn:hover{background:#0e2644}
-.btn.verde{background:var(--verde);border-color:var(--verde)}.btn.verde:hover{background:#0b857d}
+.btn.verde{background:#0b7f78;border-color:#0b7f78}.btn.verde:hover{background:#096a64}
 .btn.vuoto{background:#fff;color:var(--blu)}.btn.vuoto:hover{background:#eef3f8}
 .azioni{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:16px}
 /* schede */
@@ -54,7 +54,7 @@ a.scheda:hover{border-color:var(--verde);box-shadow:0 6px 18px rgba(20,50,92,.08
 /* pie */
 .pie{background:#0b1f47;color:#cfe0f2;margin-top:36px;padding:30px 0 18px;font-size:14px}
 .pie a{color:#fff;text-decoration:none}.pie a:hover{text-decoration:underline}
-.pie h3{color:#fff;font-size:13px}
+.pie h2{color:#fff;font-size:13px}
 .pie .griglia{gap:22px}
 @media(min-width:760px){.pie .griglia{grid-template-columns:1.2fr 1fr 1fr 1fr}}
 .pie ul{list-style:none;margin:0;padding:0}.pie li{margin:0 0 4px}
