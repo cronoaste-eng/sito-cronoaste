@@ -1,4 +1,8 @@
 /* Crono Aste - design system (30 ott 2026) */
+@font-face{font-family:'Open Sans';font-weight:400;font-style:normal;font-display:swap;src:url(/fonts/opensans-400.woff2) format('woff2')}
+@font-face{font-family:'Open Sans';font-weight:600;font-style:normal;font-display:swap;src:url(/fonts/opensans-600.woff2) format('woff2')}
+@font-face{font-family:'Open Sans';font-weight:700;font-style:normal;font-display:swap;src:url(/fonts/opensans-700.woff2) format('woff2')}
+@font-face{font-family:'Open Sans';font-weight:800;font-style:normal;font-display:swap;src:url(/fonts/opensans-800.woff2) format('woff2')}
 :root{--blu:#14325c;--verde:#0f9d94;--bordo:#dde5ee;--grigio:#5a6b82;--testo:#10243e;--sfondo:#f6f9fc;--bianco:#fff;--raggio:14px;--max:1120px}
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}

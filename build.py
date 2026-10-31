@@ -10,4 +10,9 @@ for f in sorted((S/'pagine').glob('*.html')):
     for k in('beni','come','assistenza','servizi','bollettino','chi'):h=h.replace('{{a_%s}}'%k,' aria-current="page"' if meta.get('attivo')==k else '')
     nome=f.stem;url='/' if nome=='index' else '/%s/'%nome
     out=mod.replace('{{titolo}}',meta['titolo']).replace('{{descrizione}}',meta['descrizione']).replace('{{url}}','https://cronoaste.cloud'+url).replace('{{testata}}',h).replace('{{css}}',''.join('<link rel="stylesheet" href="%s">'%c for c in meta.get('css','').split() ) ).replace('{{js}}',''.join('<script src="%s" defer></script>'%j for j in meta.get('js','').split())).replace('{{corpo}}',corpo).replace('{{pie}}',pie)
-    d=P if nome=='index' else P/nome;d.mkdir(exist_ok=True);(d/'index.html').write_text(out);print('ok',url)
+    d=P if nome in('index','404') else P/nome;d.mkdir(exist_ok=True);(d/('404.html' if nome=='404' else 'index.html')).write_text(out);print('ok',url)
+
+# sitemap, robots, 404 (sessione 5)
+urls=['/' if f.stem=='index' else '/%s/'%f.stem for f in sorted((S/'pagine').glob('*.html')) if f.stem!='404']
+(P/'sitemap.xml').write_text('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'+''.join('<url><loc>https://cronoaste.cloud%s</loc></url>\n'%u for u in urls)+'</urlset>\n')
+print('ok sitemap',len(urls))
