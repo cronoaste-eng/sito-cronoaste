@@ -23,6 +23,7 @@
 .loghi{display:flex;flex-wrap:wrap;gap:20px;align-items:center;justify-content:center}.loghi img{height:44px;width:auto}
 .cont{display:flex;flex-wrap:wrap;gap:10px}
 .cont .btn{flex:1 1 130px;text-align:center}
+.cont .btn .ic{width:22px;height:22px;vertical-align:-5px;margin-right:8px;flex:none}
 
 /* legali */
 .legale h2{font-size:18px;margin:22px 0 8px}.legale h3{font-size:15px;margin:16px 0 6px}
@@ -50,3 +51,9 @@
 .modulo .trappola{position:absolute;left:-9999px;height:0;overflow:hidden}
 .modulo .esito{font-size:14px;font-weight:600;min-height:20px}.modulo .esito.ok{color:#0b7d76}.modulo .esito.ko{color:#b3261e}
 .modulo button{justify-self:start}
+
+.contatti .btn.grande{display:block;text-align:center;font-size:17px;padding:14px 22px}
+.rigac{list-style:none;margin:16px 0 0;padding:0;display:flex;flex-direction:column;gap:12px}
+.rigac li{display:flex;align-items:center;gap:12px}
+.rigac .ic{width:22px;height:22px;flex:none}
+.rigac a{font-weight:600;color:var(--blu)}
