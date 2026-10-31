@@ -64,3 +64,9 @@
 .soc .btn,.soc .btn:hover{flex:0 1 auto;border:0;background:none;padding:8px 4px;gap:8px;font-size:14px;white-space:nowrap}
 .soc .btn:hover{text-decoration:underline}
 @media(min-width:820px){.soc{flex-wrap:nowrap}}
+
+.mt26{margin-top:26px}
+.mb14{margin-bottom:14px}
+.c404{padding:48px 16px;text-align:center}
+.nota14{margin:10px 0 0;font-size:14px}
+.nota13{margin:12px 0 0;font-size:13px}
