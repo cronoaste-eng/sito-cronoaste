@@ -91,14 +91,14 @@
     }
     var tribs=['Tutti'];dati.forEach(function(l){if(l.tribunale&&tribs.indexOf(l.tribunale)<0)tribs.push(l.tribunale)});
     var f=filtrati(),pp=per(),np=Math.max(1,Math.ceil(f.length/pp));if(st.n>=np)st.n=np-1;if(st.n<0)st.n=0;var vis=f.slice(st.n*pp,(st.n+1)*pp);
-    var h=tabs+'<div class="ca-top"><div class="ca-chips">'+tribs.map(function(t){return '<button type="button" class="ca-chip" data-t="'+esc(t)+'" aria-pressed="'+(t===st.trib)+'">'+(t==='Tutti'?'Tutti i tribunali':esc(t))+'</button>'}).join('')+'</div><div class="ca-tools"><input type="search" id="ca-q" placeholder="Cerca un bene…" aria-label="Cerca un bene" value="'+esc(st.q)+'"><select id="ca-ord" aria-label="Ordina per">'+OPZ[st.tab].map(function(o){return '<option value="'+o[0]+'"'+(o[0]===st.ord?' selected':'')+'>'+o[1]+'</option>'}).join('')+'</select></div></div>';
+    var h=tabs+'<div class="ca-top"><div class="ca-tools"><select id="ca-trib" aria-label="Filtra per tribunale">'+tribs.map(function(t){return '<option value="'+esc(t)+'"'+(t===st.trib?' selected':'')+'>'+(t==='Tutti'?'Tutti i tribunali':esc(t))+'</option>'}).join('')+'</select><input type="search" id="ca-q" placeholder="Cerca un bene…" aria-label="Cerca un bene" value="'+esc(st.q)+'"><select id="ca-ord" aria-label="Ordina per">'+OPZ[st.tab].map(function(o){return '<option value="'+o[0]+'"'+(o[0]===st.ord?' selected':'')+'>'+o[1]+'</option>'}).join('')+'</select></div></div>';
     h+='<div class="ca-grid">'+vis.map(card).join('')+'</div>';
     if(!f.length)h+='<p class="ca-msg">Nessun bene corrisponde alla ricerca.</p>';
     if(np>1)h+='<nav class="ca-pag" aria-label="Pagine"><button type="button" class="ca-pb" id="ca-prev" aria-label="Pagina precedente"'+(st.n===0?' disabled':'')+'>←<span class="ca-tx"> Precedente</span></button><label class="ca-go">Pagina <input type="number" id="ca-pg" min="1" max="'+np+'" value="'+(st.n+1)+'" inputmode="numeric" aria-label="Vai alla pagina"> di '+np+'</label><button type="button" class="ca-pb" id="ca-next" aria-label="Pagina successiva"'+(st.n>=np-1?' disabled':'')+'><span class="ca-tx">Successiva </span>→</button></nav>';
     root.innerHTML=h;legaTab();salva();applicaLive();
     var q=document.getElementById('ca-q');
     q.addEventListener('input',function(e){if(e.target.value===st.q)return;st.q=e.target.value;st.n=0;var pos=e.target.selectionStart;disegna();var n=document.getElementById('ca-q');n.focus();n.setSelectionRange(pos,pos)});
-    Array.prototype.forEach.call(root.querySelectorAll('.ca-chip'),function(b){b.addEventListener('click',function(){st.trib=b.getAttribute('data-t');st.n=0;disegna()})});
+    document.getElementById('ca-trib').addEventListener('change',function(e){if(e.target.value===st.trib)return;st.trib=e.target.value;st.n=0;disegna()});
     document.getElementById('ca-ord').addEventListener('change',function(e){if(e.target.value===st.ord)return;st.ord=e.target.value;st.n=0;disegna()});
     var pv=document.getElementById('ca-prev'),nx=document.getElementById('ca-next');
     var pg=document.getElementById('ca-pg');
