@@ -1,7 +1,7 @@
 (function(){
   // Pagina "Beni in vendita". Dati: file aggiornati ogni ora su GitHub; aste in corso dal Worker Cloudflare.
   var BASE='https://raw.githubusercontent.com/cronoaste-eng/crono-aste-lotti/main/data/';
-  var LIVE='https://live-cronoaste.cronoaste.workers.dev/live.json';
+  var LIVE='https://live-cronoaste.cronoaste.workers.dev/sito.json';
   var PIATTAFORMA='https://cronoaste.fallcoaste.it';var HOST_URL='cronoaste.fallcoaste.it',HOST_FOTO='d3h8bn4njg0vla.cloudfront.net';
   var root=document.getElementById('ca-beni');
   if(!root)return;
