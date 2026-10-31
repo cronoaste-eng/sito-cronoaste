@@ -1,4 +1,5 @@
 /*
-  Strict-Transport-Security: max-age=15552000
+  Strict-Transport-Security: max-age=31536000
   Content-Security-Policy: frame-ancestors 'none'
   Permissions-Policy: camera=(), microphone=(), geolocation=()
+  ! Access-Control-Allow-Origin

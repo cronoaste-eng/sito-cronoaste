@@ -2,7 +2,7 @@
   // Pagina "Beni in vendita". Dati: file aggiornati ogni ora su GitHub; aste in corso dal Worker Cloudflare.
   var BASE='https://raw.githubusercontent.com/cronoaste-eng/crono-aste-lotti/main/data/';
   var LIVE='https://live-cronoaste.cronoaste.workers.dev/live.json';
-  var PIATTAFORMA='https://cronoaste.fallcoaste.it';
+  var PIATTAFORMA='https://cronoaste.fallcoaste.it';var HOST_URL='cronoaste.fallcoaste.it',HOST_FOTO='d3h8bn4njg0vla.cloudfront.net';
   var root=document.getElementById('ca-beni');
   if(!root)return;
   var HOME=root.hasAttribute('data-home');
@@ -10,7 +10,7 @@
   function per(){var w=root.clientWidth||320;if(w<560)return 10;var c=Math.max(2,Math.floor((w+18)/278));return c*2}
   if(!HOME)try{var sv=JSON.parse(sessionStorage.getItem('ca_st')||'null');if(sv&&typeof sv==='object'){if(sv.tab==='attivi'||sv.tab==='archivio')st.tab=sv.tab;if(typeof sv.trib==='string')st.trib=sv.trib.slice(0,60);if(typeof sv.q==='string')st.q=sv.q.slice(0,80);if(typeof sv.ord==='string')st.ord=sv.ord;if(typeof sv.n==='number'&&sv.n>=0&&sv.n<1000)st.n=Math.floor(sv.n)}}catch(x){}
   function salva(){if(HOME)return;try{sessionStorage.setItem('ca_st',JSON.stringify({tab:st.tab,trib:st.trib,q:st.q,ord:st.ord,n:st.n}))}catch(x){}}
-  function okurl(u){u=String(u==null?'':u);return /^https:\/\/[^\s"'<>]+$/.test(u)?u:''}
+  function okurl(u,host){u=String(u==null?'':u);if(!/^https:\/\/[^\s"'<>]+$/.test(u))return '';try{var x=new URL(u);return x.protocol==='https:'&&x.hostname===host&&!x.username&&!x.password?u:''}catch(e){return ''}}
   function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
   function euro(n){if(n==null)return '—';var p=Number(n).toFixed(2).split('.');return p[0].replace(/\B(?=(\d{3})+(?!\d))/g,'.')+','+p[1]}
   function dep(l){var c=l.termine_carta,b=l.termine_bonifico;
@@ -75,7 +75,7 @@
     var prezzo=min?l.prezzo_minimo:l.prezzo;
     var lab=min?'Offerta minima':(old?(l.etichetta||'Prezzo base'):'Prezzo base');
     var righe=old?'<span>Conclusa il '+esc(giorno(l.termine))+'</span>':'<span>Inizio asta: '+esc(l.inizio)+'</span>'+dep(l);
-    return '<a class="ca-card'+(old?' ca-old':'')+'" data-id="'+esc(l.id)+'" data-bl="'+esc(lab)+'" data-bv="€ '+euro(prezzo)+'" data-tr="'+esc(l.tribunale||'')+'" data-pr="'+esc(l.procedura||'')+'" href="'+esc(okurl(l.url)||PIATTAFORMA)+'" target="_blank" rel="noopener"><div class="ca-ph">'+(okurl(l.foto)?'<img loading="lazy" src="'+esc(okurl(l.foto))+'" alt="">':'')+'<span class="ca-tag">Trib. '+esc(l.tribunale||'—')+'</span>'+esito+'<span class="ca-live"><i></i>Asta in corso</span></div><div class="ca-b"><div class="ca-meta">Proc. n. '+esc(l.procedura)+' · '+esc(l.tipo)+'</div><h2 class="ca-t">'+esc(l.titolo)+'</h2><div class="ca-d">'+righe+'</div><div class="ca-p"><span class="ca-pl">'+esc(lab)+'</span><b class="ca-pv">€ '+euro(prezzo)+'</b></div></div></a>';
+    return '<a class="ca-card'+(old?' ca-old':'')+'" data-id="'+esc(l.id)+'" data-bl="'+esc(lab)+'" data-bv="€ '+euro(prezzo)+'" data-tr="'+esc(l.tribunale||'')+'" data-pr="'+esc(l.procedura||'')+'" href="'+esc(okurl(l.url,HOST_URL)||PIATTAFORMA)+'" target="_blank" rel="noopener"><div class="ca-ph">'+(okurl(l.foto,HOST_FOTO)?'<img loading="lazy" src="'+esc(okurl(l.foto,HOST_FOTO))+'" alt="">':'')+'<span class="ca-tag">Trib. '+esc(l.tribunale||'—')+'</span>'+esito+'<span class="ca-live"><i></i>Asta in corso</span></div><div class="ca-b"><div class="ca-meta">Proc. n. '+esc(l.procedura)+' · '+esc(l.tipo)+'</div><h2 class="ca-t">'+esc(l.titolo)+'</h2><div class="ca-d">'+righe+'</div><div class="ca-p"><span class="ca-pl">'+esc(lab)+'</span><b class="ca-pv">€ '+euro(prezzo)+'</b></div></div></a>';
   }
   function disegnaHome(){
     if(!st.attivi){root.innerHTML=st.err.attivi?'<p class="ca-msg">Non riusciamo a mostrare i beni in questo momento. <a href="'+PIATTAFORMA+'" target="_blank" rel="noopener">Vedi i beni sulla piattaforma vendite</a>.</p>':'<p class="ca-msg">Caricamento dei beni\u2026</p>';return}
