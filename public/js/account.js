@@ -9,11 +9,20 @@ function email(){try{var o=JSON.parse(ls(FL)||'null');return o&&typeof o.e==='st
 function api(m,u,b){var o={method:m,headers:{},credentials:'same-origin'};if(b!==undefined){o.headers['content-type']='application/json';o.body=JSON.stringify(b)}
   return fetch(u,o).then(function(r){return r.json().catch(function(){return {ok:false}}).then(function(j){j._st=r.status;return j})})}
 function menu(){
-  var a=document.getElementById('menu-acc'),li=document.getElementById('menu-esci');if(!a)return;
+  var a=document.getElementById('menu-acc'),sub=document.getElementById('acc-sub');if(!a)return;
   var e=email();
-  if(e){a.textContent=e.length>22?e.slice(0,20)+'…':e;a.setAttribute('href','/account/');a.setAttribute('title','Il mio account');if(li)li.hidden=false}
-  else{a.textContent='Registrati / Accedi';a.setAttribute('href','/accedi/');a.removeAttribute('title');if(li)li.hidden=true}
+  if(e){a.textContent=e.length>22?e.slice(0,20)+'…':e;a.setAttribute('href','#');a.setAttribute('role','button');a.setAttribute('aria-haspopup','true');a.setAttribute('aria-expanded','false');a.setAttribute('title',e)}
+  else{a.textContent='Registrati / Accedi';a.setAttribute('href','/accedi/');a.removeAttribute('role');a.removeAttribute('aria-haspopup');a.removeAttribute('aria-expanded');a.removeAttribute('title');if(sub)sub.hidden=true}
 }
+function chiudiAcc(){var a=document.getElementById('menu-acc'),sub=document.getElementById('acc-sub');if(sub)sub.hidden=true;if(a&&a.getAttribute('aria-haspopup'))a.setAttribute('aria-expanded','false')}
+(function(){var a=document.getElementById('menu-acc'),sub=document.getElementById('acc-sub');if(!a||!sub)return;
+  a.addEventListener('click',function(e){if(!email())return;e.preventDefault();e.stopPropagation();var o=sub.hidden;sub.hidden=!o;a.setAttribute('aria-expanded',o?'true':'false')});
+  document.addEventListener('click',function(e){if(!e.target.closest('#menu-acc-li'))chiudiAcc()});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'){chiudiAcc();a.focus()}});
+  var mb=document.getElementById('acc-beni');if(mb)mb.addEventListener('click',function(){chiudiAcc();
+    var h=document.getElementById('hamb'),m=document.getElementById('menu');if(h&&m&&m.classList.contains('aperto'))h.click();
+    var pb=document.getElementById('barra-pref');if(pb)setTimeout(function(){pb.click()},0)});
+})();
 function uscitaLocale(){lsDel(FL);lsDel(CH);menu();window.dispatchEvent(new Event('ca-pref'))}
 function esci(){return api('POST','/api/esci',{}).then(function(){uscitaLocale()})}
 function scriviLocale(items){sync=true;lsSet(CH,JSON.stringify(items.slice(0,50)));window.dispatchEvent(new Event('ca-pref'));sync=false}
@@ -36,7 +45,9 @@ if(f){
     if(!em){es.className='esito ko';es.textContent='Scrivi la tua email.';return}
     if(!f.consenso.checked){es.className='esito ko';es.textContent='Serve il consenso al trattamento dei dati.';return}
     es.className='esito';es.textContent='Invio in corso...';sb.disabled=true;
-    api('POST','/api/accedi',{email:em,consenso:true,t0:t0.value,sito_web:f.sito_web.value}).then(function(j){
+    var tkn=f.querySelector('[name=cf-turnstile-response]');
+    api('POST','/api/accedi',{email:em,consenso:true,t0:t0.value,sito_web:f.sito_web.value,turnstile:tkn?tkn.value:''}).then(function(j){
+      try{if(window.turnstile)window.turnstile.reset()}catch(x){}
       es.className='esito '+(j.ok?'ok':'ko');es.textContent=j.msg||(j.ok?'Fatto.':'Errore.');sb.disabled=false;
       if(j.ok){f.reset();t0.value=Date.now()}
     }).catch(function(){es.className='esito ko';es.textContent='Connessione non riuscita. Riprova.';sb.disabled=false})});

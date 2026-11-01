@@ -1,6 +1,8 @@
 // POST /api/accedi {email, consenso, t0, sito_web}: invia il link di accesso (valido 15 minuti, monouso). Risposta sempre uguale.
 import { json, corpo, stessaOrigine, EMAIL_OK, token, sha256, limite, ipHash, pulisci, brevo, esc, SITO } from '../_lib/util.js';
 
+const MAX_GIORNO = 60; // tetto di email di accesso al giorno: protegge il limite gratuito di Brevo (300/giorno, in comune con i moduli)
+
 export async function onRequestPost({ request, env }) {
   if (!env.DB) return json({ ok: false, msg: 'Servizio non ancora attivo. Scrivici a info@cronoaste.it.' }, 503);
   if (!stessaOrigine(request)) return json({ ok: false, msg: 'Richiesta non valida.' }, 403);
@@ -13,7 +15,16 @@ export async function onRequestPost({ request, env }) {
   const email = String(b.email || '').trim().toLowerCase();
   if (!EMAIL_OK(email)) return json({ ok: false, msg: 'Controlla l\'indirizzo email.' }, 400);
   if (b.consenso !== true) return json({ ok: false, msg: 'Serve il consenso al trattamento dei dati.' }, 400);
-  if (!(await limite(env, 'ip:' + (await ipHash(request)), 10, 3600))) return json({ ok: false, msg: 'Troppi tentativi. Riprova tra un\'ora.' }, 429);
+  if (!(await limite(env, 'ip:' + (await ipHash(request)), 5, 3600))) return json({ ok: false, msg: 'Troppi tentativi. Riprova tra un\'ora.' }, 429);
+  if (env.TURNSTILE_SECRET) { // controllo anti-robot di Cloudflare (gratuito, invisibile)
+    const tk = String(b.turnstile || '').slice(0, 2100);
+    if (!tk) return json({ ok: false, msg: 'Verifica anti-robot non completata. Ricarica la pagina e riprova.' }, 400);
+    const fd = new URLSearchParams({ secret: env.TURNSTILE_SECRET, response: tk, remoteip: request.headers.get('cf-connecting-ip') || '' });
+    let v = null;
+    try { v = await (await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', { method: 'POST', body: fd })).json(); } catch (e) {}
+    if (!v || !v.success) return json({ ok: false, msg: 'Verifica anti-robot non riuscita. Ricarica la pagina e riprova.' }, 400);
+  }
+  if (!(await limite(env, 'giorno', MAX_GIORNO, 86400))) return json({ ok: false, msg: 'Il servizio ha raggiunto il limite giornaliero di accessi. Riprova domani o scrivici a info@cronoaste.it.' }, 429);
   if (!(await limite(env, 'em:' + (await sha256(email)), 3, 3600))) return json(generica); // niente informazioni su chi ha troppe richieste
   if (Math.random() < 0.05) await pulisci(env);
   const t = token();
