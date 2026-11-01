@@ -44,9 +44,9 @@
       return fetch(BASE+'live.json?t='+Math.floor(Date.now()/60000)).then(function(r){if(!r.ok)throw 0;return r.json()})});
   }
   function applicaLive(){
-    Array.prototype.forEach.call(root.querySelectorAll('.ca-card[data-id]'),function(a){
+    Array.prototype.forEach.call(document.querySelectorAll('#ca-beni .ca-card[data-id],#ca-scad .ca-card[data-id]'),function(a){
       var lv=st.live[a.getAttribute('data-id')],l=a.querySelector('.ca-pl'),v=a.querySelector('.ca-pv');
-      var ok=!!lv&&lv.stato==='attiva'&&st.tab==='attivi';
+      var ok=!!lv&&lv.stato==='attiva'&&(st.tab==='attivi'||!!a.closest('#ca-scad'));
       if(ok&&lv.termine){var t=pd(lv.termine);if(t!=null&&t<Date.now()-120000)ok=false}
       a.classList.toggle('ca-inc',ok);
       if(ok&&lv.offerte>0&&typeof lv.prezzo==='number'){l.textContent='Miglior offerta';v.textContent='€ '+euro(lv.prezzo)}
@@ -66,8 +66,8 @@
   function chiusa(l){var v=st.live[l.id];return !!v&&v.stato==='conclusa'}
   function lista(){return st.tab==='attivi'?st.attivi:st.archivio}
   function filtrati(){var q=st.q.toLowerCase();return ordina((lista()||[]).filter(function(l){return !(st.tab==='attivi'&&chiusa(l))&&(st.trib==='Tutti'||l.tribunale===st.trib)&&(!q||(l.titolo+' '+l.tribunale).toLowerCase().indexOf(q)>-1)}))}
-  function card(l){
-    var old=st.tab==='archivio';
+  function card(l,forza){
+    var old=!forza&&st.tab==='archivio';
     var esito=old&&l.esito?'<span class="ca-esito'+(l.esito==='senza offerte'?' ca-no':'')+'">'+(l.esito==='senza offerte'?'Senza offerte':'Con offerte')+'</span>':'';
     var tp=pd(l.pubblicata),nuovo=!old&&tp!=null&&Date.now()-tp>=0&&Date.now()-tp<172800000;
     if(nuovo)esito='<span class="ca-esito ca-new">Nuovo</span>';
@@ -77,12 +77,35 @@
     var righe=old?'<span>Conclusa il '+esc(giorno(l.termine))+'</span>':'<span>Inizio asta: '+esc(l.inizio)+'</span>'+dep(l);
     return '<a class="ca-card'+(old?' ca-old':'')+'" data-id="'+esc(l.id)+'" data-bl="'+esc(lab)+'" data-bv="€ '+euro(prezzo)+'" data-tr="'+esc(l.tribunale||'')+'" data-pr="'+esc(l.procedura||'')+'" href="'+esc(okurl(l.url,HOST_URL)||PIATTAFORMA)+'" target="_blank" rel="noopener"><div class="ca-ph">'+(okurl(l.foto,HOST_FOTO)?'<img loading="lazy" src="'+esc(okurl(l.foto,HOST_FOTO))+'" alt="">':'')+'<span class="ca-tag">Trib. '+esc(l.tribunale||'—')+'</span>'+esito+'<span class="ca-live"><i></i>Asta in corso</span></div><div class="ca-b"><div class="ca-meta">Proc. n. '+esc(l.procedura)+' · '+esc(l.tipo)+'</div><h2 class="ca-t">'+esc(l.titolo)+'</h2><div class="ca-d">'+righe+'</div><div class="ca-p"><span class="ca-pl">'+esc(lab)+'</span><b class="ca-pv">€ '+euro(prezzo)+'</b></div></div></a>';
   }
+  // Carosello "Beni in scadenza": i 8 lotti attivi con il termine di deposito piu' vicino (scad), solo se ancora in tempo.
+  var scadEl=document.getElementById('ca-scad'),scadHtml='';
+  function giorniA(t){var a=new Date(),b=new Date(t),d=Math.round((new Date(b.getFullYear(),b.getMonth(),b.getDate())-new Date(a.getFullYear(),a.getMonth(),a.getDate()))/86400000);return d}
+  function disegnaScad(){
+    if(!scadEl||!st.attivi)return;
+    var sec=scadEl.closest('section'),now=Date.now();
+    var a=st.attivi.filter(function(l){var t=scad(l);return !chiusa(l)&&t!=null&&t>now}).sort(function(x,y){return scad(x)-scad(y)}).slice(0,8);
+    if(!a.length){if(sec)sec.hidden=true;return}
+    if(sec)sec.hidden=false;
+    var h='<div class="sc-wrap"><div class="sc-track">'+a.map(function(l){var d=giorniA(scad(l)),tx=d<=0?'Scade oggi':d===1?'Scade domani':'Scade tra '+d+' giorni';
+      return card(l,true).replace('<span class="ca-live">','<span class="ca-esito ca-sc'+(d<=2?' ca-urg':'')+'">'+tx+'</span><span class="ca-live">')}).join('')+'</div><button type="button" class="sc-fr sc-prev" data-sc="-1" aria-label="Beni precedenti">\u2039</button><button type="button" class="sc-fr sc-next" data-sc="1" aria-label="Beni successivi">\u203a</button></div>';
+    if(h===scadHtml)return;
+    scadHtml=h;scadEl.innerHTML=h;applicaLive();
+  }
+  if(scadEl)scadEl.addEventListener('click',function(e){
+    try{
+      var b=e.target.closest&&e.target.closest('.sc-fr');
+      if(b){var t=scadEl.querySelector('.sc-track');t.scrollBy({left:(+b.getAttribute('data-sc'))*t.clientWidth*0.8,behavior:'smooth'});return}
+      var c=e.target.closest&&e.target.closest('.ca-card');
+      if(c&&typeof window.gtag==='function')window.gtag('event','clic_bene',{tribunale:c.getAttribute('data-tr')||'n.d.',procedura:c.getAttribute('data-pr')||'n.d.',sezione:'in_scadenza',posizione:Array.prototype.indexOf.call(c.parentNode.children,c)+1,transport_type:'beacon'});
+    }catch(x){}
+  });
   function disegnaHome(){
     if(!st.attivi){root.innerHTML=st.err.attivi?'<p class="ca-msg">Non riusciamo a mostrare i beni in questo momento. <a href="'+PIATTAFORMA+'" target="_blank" rel="noopener">Vedi i beni sulla piattaforma vendite</a>.</p>':'<p class="ca-msg">Caricamento dei beni\u2026</p>';return}
     var n=root.clientWidth<560?4:6;st.ord='nuovi';
     root.innerHTML='<div class="ca-grid">'+filtrati().slice(0,n).map(card).join('')+'</div>';applicaLive();
   }
   function disegna(){
+    disegnaScad();
     if(HOME){disegnaHome();return}
     var dati=lista(),tabs='<div class="ca-tabs" role="tablist"><button type="button" role="tab" class="ca-tab" data-k="attivi" aria-selected="'+(st.tab==='attivi')+'">In vendita'+(st.attivi?' ('+st.attivi.filter(function(l){return !chiusa(l)}).length+')':'')+'</button><button type="button" role="tab" class="ca-tab" data-k="archivio" aria-selected="'+(st.tab==='archivio')+'">Archivio vendite concluse'+(st.archivio?' ('+st.archivio.length+')':'')+'</button></div>';
     if(!dati){

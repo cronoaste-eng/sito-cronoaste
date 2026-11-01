@@ -80,3 +80,8 @@ a.scheda:hover .vai:after{content:"\00a0\2192\2192"}
 .aiuto{display:flex;align-items:center;gap:14px;margin-top:10px;padding:9px 14px;background:#f6f9fc;border:1px solid var(--bordo);border-radius:var(--raggio);text-decoration:none;color:inherit;flex-wrap:wrap}
 .aiuto:hover{border-color:var(--verde)}.aiuto svg{width:22px;height:22px;flex:0 0 22px;color:var(--verde)}.aiuto .testo{flex:1 1 220px;font-size:14px;color:var(--grigio)}.aiuto .testo strong{color:var(--blu)}
 .aiuto .vai{font-size:13px;font-weight:700;color:var(--verde)}.aiuto .vai:after{content:"\00a0\2192"}
+
+.qualifica{margin:8px auto 0;max-width:880px;font-size:13px;line-height:1.55;color:var(--grigio)}.qualifica a{color:var(--blu)}.qualifica span{display:inline-block}.qualifica .sep{margin:0 4px}
+@media(max-width:639px){.qualifica span{display:block}.qualifica .sep{display:none}.qualifica span+span{margin-top:2px}}
+
+section.solo-aiuto{padding:0 0 8px}.solo-aiuto .aiuto{margin-top:0}
