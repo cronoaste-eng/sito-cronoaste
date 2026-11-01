@@ -94,11 +94,28 @@
   if(scadEl)scadEl.addEventListener('click',function(e){
     try{
       var b=e.target.closest&&e.target.closest('.sc-fr');
-      if(b){var t=scadEl.querySelector('.sc-track');t.scrollBy({left:(+b.getAttribute('data-sc'))*t.clientWidth*0.8,behavior:'smooth'});return}
+      if(b){pausaScad(6000);var t=scadEl.querySelector('.sc-track');t.scrollBy({left:(+b.getAttribute('data-sc'))*t.clientWidth*0.8,behavior:'smooth'});return}
       var c=e.target.closest&&e.target.closest('.ca-card');
       if(c&&typeof window.gtag==='function')window.gtag('event','clic_bene',{tribunale:c.getAttribute('data-tr')||'n.d.',procedura:c.getAttribute('data-pr')||'n.d.',sezione:'in_scadenza',posizione:Array.prototype.indexOf.call(c.parentNode.children,c)+1,transport_type:'beacon'});
     }catch(x){}
   });
+  // Rotazione automatica: una scheda ogni 4 s, a fine corsa riparte dalla prima. Si ferma solo mentre c'e' il dito o il mouse sopra.
+  var scadPausa=0;
+  function pausaScad(ms){scadPausa=ms===Infinity?Infinity:Date.now()+ms}
+  if(scadEl){
+    ['mouseenter','touchstart','focusin'].forEach(function(n){scadEl.addEventListener(n,function(){pausaScad(Infinity)},{passive:true})});
+    ['mouseleave','touchend','touchcancel','focusout'].forEach(function(n){scadEl.addEventListener(n,function(){pausaScad(3500)},{passive:true})});
+    if(!(window.matchMedia&&window.matchMedia('(prefers-reduced-motion:reduce)').matches))setInterval(function(){
+      try{
+        if(document.hidden||Date.now()<scadPausa)return;
+        var t=scadEl.querySelector('.sc-track');if(!t||!t.children.length)return;
+        var r=t.getBoundingClientRect();if(r.bottom<0||r.top>window.innerHeight)return;
+        var passo=t.children[0].offsetWidth+(parseFloat(getComputedStyle(t).columnGap)||12);
+        if(t.scrollLeft+t.clientWidth>=t.scrollWidth-4)t.scrollTo({left:0,behavior:'smooth'});
+        else t.scrollTo({left:Math.round(t.scrollLeft/passo)*passo+passo,behavior:'smooth'});
+      }catch(x){}
+    },4000);
+  }
   function disegnaHome(){
     if(!st.attivi){root.innerHTML=st.err.attivi?'<p class="ca-msg">Non riusciamo a mostrare i beni in questo momento. <a href="'+PIATTAFORMA+'" target="_blank" rel="noopener">Vedi i beni sulla piattaforma vendite</a>.</p>':'<p class="ca-msg">Caricamento dei beni\u2026</p>';return}
     var n=root.clientWidth<560?4:6;st.ord='nuovi';

@@ -85,3 +85,6 @@ a.scheda:hover .vai:after{content:"\00a0\2192\2192"}
 @media(max-width:639px){.qualifica span{display:block}.qualifica .sep{display:none}.qualifica span+span{margin-top:2px}}
 
 section.solo-aiuto{padding:0 0 8px}.solo-aiuto .aiuto{margin-top:0}
+
+section.scad{padding-bottom:0}section.solo-aiuto{padding-top:0}
+.qualifica span{display:block}.qualifica .sep{display:none}
