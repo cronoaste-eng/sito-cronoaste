@@ -88,3 +88,5 @@ section.solo-aiuto{padding:0 0 8px}.solo-aiuto .aiuto{margin-top:0}
 
 section.scad{padding-bottom:0}section.solo-aiuto{padding-top:0}
 .qualifica span{display:block}.qualifica .sep{display:none}
+body{min-height:100vh;min-height:100dvh;display:flex;flex-direction:column}
+body>main{flex:1 0 auto}
