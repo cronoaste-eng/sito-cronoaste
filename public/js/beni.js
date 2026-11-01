@@ -66,7 +66,33 @@
   function chiusa(l){var v=st.live[l.id];return !!v&&v.stato==='conclusa'}
   function lista(){return st.tab==='attivi'?st.attivi:st.archivio}
   function filtrati(){var q=st.q.toLowerCase();return ordina((lista()||[]).filter(function(l){return !(st.tab==='attivi'&&chiusa(l))&&(st.trib==='Tutti'||l.tribunale===st.trib)&&(!q||(l.titolo+' '+l.tribunale).toLowerCase().indexOf(q)>-1)}))}
-  function card(l,forza){
+  var CUORE='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7.5-4.6-7.5-10A4.3 4.3 0 0 1 12 7.4 4.3 4.3 0 0 1 19.5 10c0 5.4-7.5 10-7.5 10z"/></svg>';
+  function prefLeggi(){try{var a=JSON.parse(localStorage.getItem('ca_pref')||'[]');return Array.isArray(a)?a:[]}catch(e){return []}}
+  function prefHa(id){return prefLeggi().some(function(x){return x&&String(x.id)===String(id)})}
+  function conCuore(h,l,forza){
+    if(st.tab==='archivio'&&!forza)return h;
+    var on=prefHa(l.id);
+    return h.replace('<span class="ca-live">','<span class="ca-cuore'+(on?' ca-on':'')+'" role="button" tabindex="0" data-cu="'+esc(l.id)+'" aria-pressed="'+on+'" aria-label="Salva tra Le mie aste">'+CUORE+'</span><span class="ca-live">')}
+  function prefSincro(){Array.prototype.forEach.call(document.querySelectorAll('.ca-cuore[data-cu]'),function(c){var on=prefHa(c.getAttribute('data-cu'));c.classList.toggle('ca-on',on);c.setAttribute('aria-pressed',on)})}
+  function prefToggle(id){
+    var a=prefLeggi(),i=-1;a.forEach(function(x,k){if(x&&String(x.id)===String(id))i=k});
+    if(i>=0)a.splice(i,1);
+    else{var l=((st.attivi||[]).concat(st.archivio||[])).filter(function(x){return String(x.id)===String(id)})[0];if(!l)return;
+      a.unshift({id:String(l.id),t:String(l.titolo||'').slice(0,160),tr:l.tribunale||'',u:okurl(l.url,HOST_URL),f:okurl(l.foto,HOST_FOTO),s:scad(l),p:pr(l)})}
+    try{localStorage.setItem('ca_pref',JSON.stringify(a.slice(0,50)))}catch(e){}
+    try{if(typeof window.gtag==='function')window.gtag('event',i>=0?'rimuovi_asta':'salva_asta',{transport_type:'beacon'})}catch(e){}
+    try{navigator.sendBeacon('/api/evento',i>=0?'rimuovi_asta':'salva_asta')}catch(e){}
+    prefSincro();window.dispatchEvent(new Event('ca-pref'));
+  }
+  function cuoreEvento(e){
+    var c=e.target.closest&&e.target.closest('.ca-cuore');if(!c)return;
+    if(e.type==='keydown'&&e.key!=='Enter'&&e.key!==' ')return;
+    e.preventDefault();e.stopPropagation();prefToggle(c.getAttribute('data-cu'));
+  }
+  [root,document.getElementById('ca-scad')].forEach(function(el){if(el){el.addEventListener('click',cuoreEvento,true);el.addEventListener('keydown',cuoreEvento,true)}});
+  window.addEventListener('ca-pref',prefSincro);
+  function card(l,forza){return conCuore(card0(l,forza),l,forza)}
+  function card0(l,forza){
     var old=!forza&&st.tab==='archivio';
     var esito=old&&l.esito?'<span class="ca-esito'+(l.esito==='senza offerte'?' ca-no':'')+'">'+(l.esito==='senza offerte'?'Senza offerte':'Con offerte')+'</span>':'';
     var tp=pd(l.pubblicata),nuovo=!old&&tp!=null&&Date.now()-tp>=0&&Date.now()-tp<172800000;
@@ -144,7 +170,7 @@
     }
     var tribs=['Tutti'];dati.forEach(function(l){if(l.tribunale&&tribs.indexOf(l.tribunale)<0)tribs.push(l.tribunale)});
     var f=filtrati(),pp=per(),np=Math.max(1,Math.ceil(f.length/pp));if(st.n>=np)st.n=np-1;if(st.n<0)st.n=0;var vis=f.slice(st.n*pp,(st.n+1)*pp);
-    var h=tabs+'<div class="ca-top"><div class="ca-tools"><select id="ca-trib" aria-label="Filtra per tribunale">'+tribs.map(function(t){return '<option value="'+esc(t)+'"'+(t===st.trib?' selected':'')+'>'+(t==='Tutti'?'Tutti i tribunali':esc(t))+'</option>'}).join('')+'</select><input type="search" id="ca-q" placeholder="Cerca un bene…" aria-label="Cerca un bene" value="'+esc(st.q)+'"><select id="ca-ord" aria-label="Ordina per">'+OPZ[st.tab].map(function(o){return '<option value="'+o[0]+'"'+(o[0]===st.ord?' selected':'')+'>'+o[1]+'</option>'}).join('')+'</select></div></div>';
+    var h=tabs+'<div class="ca-top"><div class="ca-tools"><input type="search" id="ca-q" placeholder="Cerca un bene…" aria-label="Cerca un bene" value="'+esc(st.q)+'"><select id="ca-ord" aria-label="Ordina per">'+OPZ[st.tab].map(function(o){return '<option value="'+o[0]+'"'+(o[0]===st.ord?' selected':'')+'>'+o[1]+'</option>'}).join('')+'</select><select id="ca-trib" aria-label="Filtra per tribunale">'+tribs.map(function(t){return '<option value="'+esc(t)+'"'+(t===st.trib?' selected':'')+'>'+(t==='Tutti'?'Tutti i tribunali':esc(t))+'</option>'}).join('')+'</select></div></div>';
     h+='<div class="ca-grid">'+vis.map(card).join('')+'</div>';
     if(!f.length)h+='<p class="ca-msg">Nessun bene corrisponde alla ricerca.</p>';
     if(np>1)h+='<nav class="ca-pag" aria-label="Pagine"><button type="button" class="ca-pb" id="ca-prev" aria-label="Pagina precedente"'+(st.n===0?' disabled':'')+'>←<span class="ca-tx"> Precedente</span></button><label class="ca-go">Pagina <input type="number" id="ca-pg" min="1" max="'+np+'" value="'+(st.n+1)+'" inputmode="numeric" aria-label="Vai alla pagina"> di '+np+'</label><button type="button" class="ca-pb" id="ca-next" aria-label="Pagina successiva"'+(st.n>=np-1?' disabled':'')+'><span class="ca-tx">Successiva </span>→</button></nav>';

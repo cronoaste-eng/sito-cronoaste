@@ -14,7 +14,7 @@
 #ca-arch .ca-btn{display:inline-block;border:1px solid #dde5ee;background:#fff;color:#14325c;font-size:14px;font-weight:600;padding:10px 14px;border-radius:999px;min-height:40px}
 #ca-arch .ca-btn:disabled{opacity:.4;cursor:default}
 #ca-arch .ca-pri{background:#14325c;border-color:#14325c;color:#fff}
-#ca-arch .ca-btn:not(:disabled):hover{border-color:#0f9d94}
+#ca-arch .ca-btn:not(:disabled):hover{border-color:#2f5f9e}
 #ca-arch .ca-card{border:1px solid #dde5ee;border-radius:14px;background:#fff;padding:16px 18px;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px}
 #ca-arch .ca-row{display:flex;gap:12px;align-items:center;padding:10px 0;border-top:1px solid #e3eaf2}
 #ca-arch .ca-img{width:56px;height:56px;flex:none;border-radius:8px;background:#e8ecf0;object-fit:cover;display:block}

@@ -1,5 +1,5 @@
 /* Pagina Beni in vendita */
-:is(#ca-beni,#ca-scad){--ca-brand:#14325c;--ca-acc:#0f9d94;--ca-line:#dde5ee;--ca-mut:#5a6b82;padding:0 0 32px;container-type:inline-size;min-height:420px}
+:is(#ca-beni,#ca-scad){--ca-brand:#14325c;--ca-acc:#2f5f9e;--ca-line:#dde5ee;--ca-mut:#5a6b82;padding:0 0 32px;container-type:inline-size;min-height:420px}
 :is(#ca-beni,#ca-scad) .ca-tabs{display:flex;gap:6px;border-bottom:2px solid var(--ca-line);margin-bottom:18px}
 :is(#ca-beni,#ca-scad) .ca-tab{font:inherit;font-size:16px;font-weight:700;padding:10px 18px;border:0;background:none;color:var(--ca-mut);cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px}
 :is(#ca-beni,#ca-scad) .ca-tab[aria-selected="true"]{color:var(--ca-brand);border-bottom-color:var(--ca-acc)}
@@ -13,7 +13,7 @@
 :is(#ca-beni,#ca-scad) .ca-grid{display:grid;grid-template-columns:minmax(0,1fr);gap:14px}
 :is(#ca-beni,#ca-scad) .ca-card{display:grid;grid-template-rows:auto 1fr;background:#fff;border:1px solid var(--ca-line);border-radius:14px;overflow:hidden;text-decoration:none;color:inherit;min-width:0;box-shadow:0 2px 10px rgba(20,50,92,.09);transition:border-color .2s,transform .2s,box-shadow .2s}
 :is(#ca-beni,#ca-scad) .ca-card:hover{border-color:var(--ca-acc);transform:translateY(-2px);box-shadow:0 6px 18px rgba(20,50,92,.14)}
-:is(#ca-beni,#ca-scad) .ca-ph{height:170px;background:#e1f5f3;position:relative}
+:is(#ca-beni,#ca-scad) .ca-ph{height:170px;background:#e6eef8;position:relative}
 :is(#ca-beni,#ca-scad) .ca-ph img{position:absolute;left:0;top:0;width:100%;height:100%;object-fit:cover;display:block}
 :is(#ca-beni,#ca-scad) .ca-old .ca-ph img{filter:grayscale(.55)}
 :is(#ca-beni,#ca-scad) .ca-tag{position:absolute;left:10px;top:10px;background:#0c2a4d;color:#fff;box-shadow:0 1px 4px rgba(0,0,0,.35);font-size:12px;font-weight:700;padding:3px 10px;border-radius:999px}
@@ -60,3 +60,14 @@
 @media(min-width:1000px){#ca-scad .sc-track .ca-card{flex-basis:calc((100% - 48px)/4)}}
 @container (max-width:420px){:is(#ca-beni,#ca-scad) select{background-position:right 13px center;padding-right:30px;padding-left:14px}}
 @media(max-width:759px){#ca-scad .sc-wrap{margin:0 -16px}#ca-scad .sc-track{padding:4px 16px 16px;scroll-padding-left:16px}#ca-scad .sc-track .ca-card{flex-basis:84%}#ca-scad .sc-track::after{content:"";flex:0 0 4px}}
+
+:is(#ca-beni,#ca-scad) .ca-cuore{position:absolute;right:10px;top:10px;width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.94);color:#14325c;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 1px 4px rgba(20,50,92,.25);z-index:2}
+:is(#ca-beni,#ca-scad) .ca-cuore svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linejoin:round}
+:is(#ca-beni,#ca-scad) .ca-cuore:hover{background:#fff;color:#3b6ca8}
+:is(#ca-beni,#ca-scad) .ca-cuore.ca-on svg{fill:#14325c}
+:is(#ca-beni,#ca-scad) .ca-esito:not(.ca-sc){right:50px}
+
+:is(#ca-beni,#ca-scad) .ca-tools{gap:8px}
+:is(#ca-beni,#ca-scad) select{font-size:14px;padding:6px 32px 6px 14px;background-position:right 13px center;background-size:11px 7px}
+:is(#ca-beni,#ca-scad) input[type=search]{font-size:14px;padding:6px 14px;width:210px}
+@container (max-width:420px){:is(#ca-beni,#ca-scad) select{font-size:13px;padding:6px 28px 6px 12px;background-position:right 11px center}:is(#ca-beni,#ca-scad) input[type=search]{font-size:13px;padding:6px 12px;width:100%}}
