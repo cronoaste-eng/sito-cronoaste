@@ -67,3 +67,16 @@ a.scheda:hover .vai:after{content:"\00a0\2192\2192"}
 @media(min-width:760px){.pie .griglia{grid-template-columns:1.2fr 1fr 1fr 1fr}}
 .pie ul{list-style:none;margin:0;padding:0}.pie li{margin:0 0 4px}
 .pie .legale{border-top:1px solid #234473;margin-top:20px;padding-top:12px;font-size:12px;display:flex;flex-wrap:wrap;gap:8px 18px;justify-content:space-between}
+
+.porte{display:grid;gap:10px;grid-template-columns:minmax(0,1fr)}
+@media(min-width:900px){.porte{grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}}
+.porta{display:flex;flex-direction:column;background:#fff;border:1px solid var(--bordo);border-radius:var(--raggio);padding:14px 16px;text-decoration:none;color:inherit}
+.porta:hover{border-color:var(--verde);box-shadow:0 6px 18px rgba(20,50,92,.08)}
+.porta .ico{width:40px;height:40px;border-radius:50%;background:#eef6f6;color:var(--verde);display:flex;align-items:center;justify-content:center;margin-bottom:8px}.porta .ico svg{width:22px;height:22px}
+.porta .chi{font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--verde);margin-bottom:4px}
+.porta h3{margin:0 0 4px;font-size:17px}.porta p{margin:0;color:var(--grigio);font-size:14px;line-height:1.45}
+.porta .vai{margin-top:auto;padding-top:10px;font-size:13px;font-weight:700;color:var(--verde)}.porta .vai:after{content:"\00a0\2192"}
+.porta.primaria{border-color:var(--verde);border-width:2px}.porta.primaria .ico{background:#0b7f78;color:#fff}.porta.primaria .vai{align-self:flex-start;margin-top:10px;padding:6px 14px;background:#0b7f78;color:#fff;border-radius:999px}
+.aiuto{display:flex;align-items:center;gap:14px;margin-top:10px;padding:9px 14px;background:#f6f9fc;border:1px solid var(--bordo);border-radius:var(--raggio);text-decoration:none;color:inherit;flex-wrap:wrap}
+.aiuto:hover{border-color:var(--verde)}.aiuto svg{width:22px;height:22px;flex:0 0 22px;color:var(--verde)}.aiuto .testo{flex:1 1 220px;font-size:14px;color:var(--grigio)}.aiuto .testo strong{color:var(--blu)}
+.aiuto .vai{font-size:13px;font-weight:700;color:var(--verde)}.aiuto .vai:after{content:"\00a0\2192"}
