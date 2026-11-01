@@ -54,10 +54,10 @@
 .modulo button{justify-self:start}
 
 .contatti .btn.grande{display:block;text-align:center;font-size:17px;padding:14px 22px}
-.rigac{list-style:none;margin:16px 0 0;padding:0;display:flex;flex-direction:column;gap:12px}
+.rigac{list-style:none;margin:16px 0 0;padding:0;display:flex;flex-direction:column;gap:4px}
 .rigac li{display:flex;align-items:center;gap:14px}
 .rigac .ic{width:22px;height:22px;flex:none}
-.rigac a{font-weight:600;color:var(--blu)}
+.rigac a{font-weight:600;color:var(--blu);display:inline-flex;align-items:center;min-height:44px}
 
 .soc{gap:6px 4px;justify-content:space-between}
 .soc .btn .ic{width:22px;height:22px}
