@@ -71,3 +71,8 @@
 :is(#ca-beni,#ca-scad) select{font-size:14px;padding:6px 32px 6px 14px;background-position:right 13px center;background-size:11px 7px}
 :is(#ca-beni,#ca-scad) input[type=search]{font-size:14px;padding:6px 14px;width:210px}
 @container (max-width:420px){:is(#ca-beni,#ca-scad) select{font-size:13px;padding:6px 28px 6px 12px;background-position:right 11px center}:is(#ca-beni,#ca-scad) input[type=search]{font-size:13px;padding:6px 12px;width:100%}}
+
+:is(#ca-beni,#ca-scad) .ca-more{flex-direction:column;gap:8px}
+:is(#ca-beni,#ca-scad) .ca-pbm{width:100%;max-width:340px;padding:14px 18px;font-size:16px;background:var(--ca-brand);color:#fff;border-color:var(--ca-brand)}
+:is(#ca-beni,#ca-scad) .ca-cnt{font-size:13px;color:var(--ca-mut);font-weight:600}
+:is(#ca-beni,#ca-scad) .ca-fine{text-align:center;margin-top:18px}
