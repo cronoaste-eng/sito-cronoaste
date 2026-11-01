@@ -1,7 +1,7 @@
 // Funzioni comuni per l'account (D1 binding "DB", secret BREVO_API_KEY_2).
 export const SITO = 'https://cronoaste.cloud';
 export const COOKIE = 'ca_sess';
-const SESSIONE_S = 60 * 60 * 24 * 30;
+const SESSIONE_S = 60 * 60 * 24 * 180; // 6 mesi
 
 export const json = (obj, st, extra) => new Response(JSON.stringify(obj), { status: st || 200, headers: Object.assign({ 'content-type': 'application/json', 'cache-control': 'no-store' }, extra || {}) });
 export const EMAIL_OK = e => e.length <= 160 && /^[^@\s,;<>"']+@[^@\s,;<>"']+\.[^@\s,;<>"']+$/.test(e);
