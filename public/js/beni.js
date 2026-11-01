@@ -78,7 +78,7 @@
     return '<a class="ca-card'+(old?' ca-old':'')+'" data-id="'+esc(l.id)+'" data-bl="'+esc(lab)+'" data-bv="€ '+euro(prezzo)+'" data-tr="'+esc(l.tribunale||'')+'" data-pr="'+esc(l.procedura||'')+'" href="'+esc(okurl(l.url,HOST_URL)||PIATTAFORMA)+'" target="_blank" rel="noopener"><div class="ca-ph">'+(okurl(l.foto,HOST_FOTO)?'<img loading="lazy" src="'+esc(okurl(l.foto,HOST_FOTO))+'" alt="">':'')+'<span class="ca-tag">Trib. '+esc(l.tribunale||'—')+'</span>'+esito+'<span class="ca-live"><i></i>Asta in corso</span></div><div class="ca-b"><div class="ca-meta">Proc. n. '+esc(l.procedura)+' · '+esc(l.tipo)+'</div><h2 class="ca-t">'+esc(l.titolo)+'</h2><div class="ca-d">'+righe+'</div><div class="ca-p"><span class="ca-pl">'+esc(lab)+'</span><b class="ca-pv">€ '+euro(prezzo)+'</b></div></div></a>';
   }
   // Carosello "Beni in scadenza": i 8 lotti attivi con il termine di deposito piu' vicino (scad), solo se ancora in tempo.
-  var scadEl=document.getElementById('ca-scad'),scadHtml='';
+  var scadEl=document.getElementById('ca-scad'),scadHtml='',scadCloni='';
   function giorniA(t){var a=new Date(),b=new Date(t),d=Math.round((new Date(b.getFullYear(),b.getMonth(),b.getDate())-new Date(a.getFullYear(),a.getMonth(),a.getDate()))/86400000);return d}
   function disegnaScad(){
     if(!scadEl||!st.attivi)return;
@@ -86,33 +86,46 @@
     var a=st.attivi.filter(function(l){var t=scad(l);return !chiusa(l)&&t!=null&&t>now}).sort(function(x,y){return scad(x)-scad(y)}).slice(0,8);
     if(!a.length){if(sec)sec.hidden=true;return}
     if(sec)sec.hidden=false;
-    var h='<div class="sc-wrap"><div class="sc-track">'+a.map(function(l){var d=giorniA(scad(l)),tx=d<=0?'Scade oggi':d===1?'Scade domani':'Scade tra '+d+' giorni';
-      return card(l,true).replace('<span class="ca-live">','<span class="ca-esito ca-sc'+(d<=2?' ca-urg':'')+'">'+tx+'</span><span class="ca-live">')}).join('')+'</div><button type="button" class="sc-fr sc-prev" data-sc="-1" aria-label="Beni precedenti">\u2039</button><button type="button" class="sc-fr sc-next" data-sc="1" aria-label="Beni successivi">\u203a</button></div>';
+    var schede=a.map(function(l){var d=giorniA(scad(l)),tx=d<=0?'Scade oggi':d===1?'Scade domani':'Scade tra '+d+' giorni';
+      return card(l,true).replace('<span class="ca-live">','<span class="ca-esito ca-sc'+(d<=2?' ca-urg':'')+'">'+tx+'</span><span class="ca-live">')});
+    scadCloni=schede.map(function(s){return s.replace('<a class="ca-card','<a tabindex="-1" aria-hidden="true" class="ca-card')}).join('');
+    var h='<div class="sc-wrap"><div class="sc-track" data-n="'+a.length+'">'+schede.join('')+'</div><button type="button" class="sc-fr sc-prev" data-sc="-1" aria-label="Beni precedenti">\u2039</button><button type="button" class="sc-fr sc-next" data-sc="1" aria-label="Beni successivi">\u203a</button></div>';
     if(h===scadHtml)return;
-    scadHtml=h;scadEl.innerHTML=h;applicaLive();
+    scadHtml=h;scadEl.innerHTML=h;
+    // Giro continuo: se le schede non entrano tutte, si aggiunge una copia dopo l'ultima e si riavvolge senza che si veda.
+    var tr=scadEl.querySelector('.sc-track');
+    if(tr&&tr.scrollWidth>tr.clientWidth+4){tr.insertAdjacentHTML('beforeend',scadCloni);tr.setAttribute('data-loop','1')}
+    applicaLive();
   }
   if(scadEl)scadEl.addEventListener('click',function(e){
     try{
       var b=e.target.closest&&e.target.closest('.sc-fr');
-      if(b){pausaScad(6000);var t=scadEl.querySelector('.sc-track');t.scrollBy({left:(+b.getAttribute('data-sc'))*t.clientWidth*0.8,behavior:'smooth'});return}
+      if(b){pausaScad(6000);var t=scadEl.querySelector('.sc-track'),dir=+b.getAttribute('data-sc');
+        if(dir<0&&t.getAttribute('data-loop')&&t.scrollLeft<=4)scadSalta(t,scadSet(t));
+        t.scrollBy({left:dir*t.clientWidth*0.8,behavior:'smooth'});return}
       var c=e.target.closest&&e.target.closest('.ca-card');
-      if(c&&typeof window.gtag==='function')window.gtag('event','clic_bene',{tribunale:c.getAttribute('data-tr')||'n.d.',procedura:c.getAttribute('data-pr')||'n.d.',sezione:'in_scadenza',posizione:Array.prototype.indexOf.call(c.parentNode.children,c)+1,transport_type:'beacon'});
+      if(c&&typeof window.gtag==='function')window.gtag('event','clic_bene',{tribunale:c.getAttribute('data-tr')||'n.d.',procedura:c.getAttribute('data-pr')||'n.d.',sezione:'in_scadenza',posizione:Array.prototype.indexOf.call(c.parentNode.children,c)%(+c.parentNode.getAttribute('data-n')||99)+1,transport_type:'beacon'});
     }catch(x){}
   });
-  // Rotazione automatica: una scheda ogni 4 s, a fine corsa riparte dalla prima. Si ferma solo mentre c'e' il dito o il mouse sopra.
-  var scadPausa=0;
+  // Rotazione automatica continua: una scheda ogni 4 s, sempre nello stesso verso. Dopo l'ultima compare la copia della prima
+  // e, a movimento finito, si torna senza scatti alla prima vera. Si ferma solo mentre c'e' il dito o il mouse sopra.
+  var scadPausa=0,scadTimer=0;
   function pausaScad(ms){scadPausa=ms===Infinity?Infinity:Date.now()+ms}
+  function scadSet(t){var n=+t.getAttribute('data-n');return n&&t.children[n]?t.children[n].offsetLeft-t.children[0].offsetLeft:0}
+  function scadSalta(t,x){t.style.scrollSnapType='none';t.style.scrollBehavior='auto';t.scrollLeft=x;t.style.scrollBehavior='';requestAnimationFrame(function(){t.style.scrollSnapType=''})}
+  function scadRiavvolgi(t){if(!t.getAttribute('data-loop'))return;var s=scadSet(t);if(s&&t.scrollLeft>=s-1)scadSalta(t,t.scrollLeft-s)}
   if(scadEl){
     ['mouseenter','touchstart','focusin'].forEach(function(n){scadEl.addEventListener(n,function(){pausaScad(Infinity)},{passive:true})});
     ['mouseleave','touchend','touchcancel','focusout'].forEach(function(n){scadEl.addEventListener(n,function(){pausaScad(3500)},{passive:true})});
+    scadEl.addEventListener('scroll',function(e){var t=e.target;if(!t||!t.classList||!t.classList.contains('sc-track'))return;clearTimeout(scadTimer);scadTimer=setTimeout(function(){scadRiavvolgi(t)},160)},true);
     if(!(window.matchMedia&&window.matchMedia('(prefers-reduced-motion:reduce)').matches))setInterval(function(){
       try{
         if(document.hidden||Date.now()<scadPausa)return;
-        var t=scadEl.querySelector('.sc-track');if(!t||!t.children.length)return;
+        var t=scadEl.querySelector('.sc-track');if(!t||!t.getAttribute('data-loop'))return;
         var r=t.getBoundingClientRect();if(r.bottom<0||r.top>window.innerHeight)return;
-        var passo=t.children[0].offsetWidth+(parseFloat(getComputedStyle(t).columnGap)||12);
-        if(t.scrollLeft+t.clientWidth>=t.scrollWidth-4)t.scrollTo({left:0,behavior:'smooth'});
-        else t.scrollTo({left:Math.round(t.scrollLeft/passo)*passo+passo,behavior:'smooth'});
+        scadRiavvolgi(t);
+        var passo=t.children[1].offsetLeft-t.children[0].offsetLeft;
+        t.scrollTo({left:Math.round(t.scrollLeft/passo)*passo+passo,behavior:'smooth'});
       }catch(x){}
     },4000);
   }
