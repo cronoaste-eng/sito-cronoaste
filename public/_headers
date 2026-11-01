@@ -4,3 +4,15 @@
   Content-Security-Policy-Report-Only: default-src 'self'; script-src 'self' https://www.googletagmanager.com; style-src 'self'; style-src-attr 'unsafe-inline'; font-src 'self'; img-src 'self' data: https://d3h8bn4njg0vla.cloudfront.net https://*.google-analytics.com https://*.googletagmanager.com https://*.doubleclick.net https://www.google.com https://www.google.it; connect-src 'self' https://raw.githubusercontent.com https://live-cronoaste.cronoaste.workers.dev https://*.google-analytics.com https://*.analytics.google.com https://www.googletagmanager.com https://stats.g.doubleclick.net; frame-src https://www.youtube-nocookie.com https://791fdff7.sibforms.com; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'
   Permissions-Policy: camera=(), microphone=(), geolocation=()
   ! Access-Control-Allow-Origin
+
+/accedi/*
+  X-Robots-Tag: noindex
+  Referrer-Policy: no-referrer
+  Cache-Control: no-store
+
+/account/*
+  X-Robots-Tag: noindex
+  Cache-Control: no-store
+
+/api/*
+  X-Robots-Tag: noindex

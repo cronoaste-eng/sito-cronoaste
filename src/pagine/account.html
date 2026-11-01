@@ -1,0 +1,20 @@
+---
+titolo: Il mio account - Crono Aste S.r.l.
+descrizione: Gestisci il tuo account su cronoaste.cloud: promemoria di scadenza, uscita ed eliminazione dei dati.
+attivo: 
+css: /css/pagine.css
+---
+<section class="eroe"><div class="contenitore"><h1>Il mio account</h1></div></section>
+<section><div class="contenitore"><div class="acc-box">
+<div id="acc-fuori" hidden><p>Non sei collegato. <a href="/accedi/">Registrati / Accedi</a> con un link via email.</p></div>
+<div id="acc-dentro" hidden>
+<p>Sei collegato come <strong id="acc-email"></strong>.</p>
+<p>Beni salvati: <strong id="acc-n">0</strong> (li trovi in &quot;Le mie aste&quot;).</p>
+<label class="cons"><input type="checkbox" id="acc-prom"><span>Inviami un promemoria per email 2 giorni e 1 giorno prima della scadenza del deposito dei beni salvati.</span></label>
+<p class="esito" id="acc-esito" role="status" aria-live="polite"></p>
+<p><button class="btn vuoto" type="button" id="acc-esci">Esci</button></p>
+<h2>Elimina l'account</h2>
+<p>Cancella subito il tuo indirizzo email, i beni salvati e i promemoria. L'operazione non si pu&ograve; annullare.</p>
+<p><button class="btn vuoto" type="button" id="acc-elimina">Elimina il mio account</button></p>
+</div>
+</div></div></section>

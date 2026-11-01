@@ -78,3 +78,8 @@
 .cont.minimal .mini{display:inline-flex;align-items:center;gap:8px;padding:7px 14px;border:1px solid var(--bordo);border-radius:999px;background:#fff;color:var(--blu);font-size:14px;font-weight:600;text-decoration:none}
 .cont.minimal .mini .ic{width:18px;height:18px;flex:none;color:var(--verde)}
 .cont.minimal .mini:hover{border-color:var(--verde)}
+
+/* Account (sessione 10) */
+.acc-box{max-width:560px;margin:0 auto}
+.acc-box .nota{font-size:13px;color:var(--grigio);margin-top:14px}
+.acc-box .btn{margin:4px 6px 4px 0}

@@ -141,3 +141,9 @@ body:has(#cc) .wa-chat{display:none}
 .pie{padding-bottom:max(18px,env(safe-area-inset-bottom))}
 @media(max-width:759px){.pie{padding-bottom:72px}}
 @media print{.wa-chat{display:none}}
+
+/* Voce Esci nel menu (sessione 10) */
+.menu-esci button{font:inherit;font-size:13px;font-weight:600;color:var(--blu);background:none;border:0;padding:8px 10px;border-radius:999px;cursor:pointer;white-space:nowrap}
+.menu-esci button:hover{background:#e6eef8;color:#2f5f9e}
+.menu-esci[hidden]{display:none}
+.menu.aperto .menu-esci button{font-size:16px;padding:12px 8px;width:100%;text-align:left}

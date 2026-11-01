@@ -14,6 +14,6 @@ for f in sorted((S/'pagine').glob('*.html')):
     d=P if nome in('index','404') else P/nome;d.mkdir(exist_ok=True);(d/('404.html' if nome=='404' else 'index.html')).write_text(out);print('ok',url)
 
 # sitemap, robots, 404 (sessione 5)
-urls=['/' if f.stem=='index' else '/%s/'%f.stem for f in sorted((S/'pagine').glob('*.html')) if f.stem!='404']
+urls=['/' if f.stem=='index' else '/%s/'%f.stem for f in sorted((S/'pagine').glob('*.html')) if f.stem not in('404','accedi','account')]
 (P/'sitemap.xml').write_text('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'+''.join('<url><loc>https://cronoaste.cloud%s</loc></url>\n'%u for u in urls)+'</urlset>\n')
 print('ok sitemap',len(urls))

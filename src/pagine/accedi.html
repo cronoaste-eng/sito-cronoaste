@@ -1,0 +1,29 @@
+---
+titolo: Registrati / Accedi - Crono Aste S.r.l.
+descrizione: Accedi senza password con un link via email per ritrovare da ogni dispositivo i beni che hai salvato e ricevere i promemoria di scadenza.
+attivo: 
+css: /css/pagine.css
+---
+<section class="eroe"><div class="contenitore"><h1>Registrati / Accedi</h1><p class="sotto">Nessuna password: ti mandiamo un link via email. Con l'account ritrovi i beni salvati con il cuore da qualsiasi dispositivo e, se vuoi, ricevi un promemoria prima della scadenza del deposito.</p></div></section>
+<section><div class="contenitore"><div class="acc-box">
+<div id="acc-form-box">
+<form class="modulo" id="acc-form" novalidate>
+<input type="hidden" name="t0" value="">
+<div class="trappola" aria-hidden="true"><label>Non compilare<input type="text" name="sito_web" tabindex="-1" autocomplete="off"></label></div>
+<label>La tua email *<input type="email" name="email" required autocomplete="email" inputmode="email"></label>
+<label class="cons"><input type="checkbox" name="consenso" value="si" required><span>Ho letto l'<a href="/privacy-policy/" target="_blank">informativa privacy</a> e acconsento al trattamento dei miei dati (email e beni salvati) per gestire il mio account e inviarmi i promemoria di scadenza dei beni che salvo. Posso disattivarli o eliminare l'account in ogni momento.</span></label>
+<button class="btn verde" type="submit">Inviami il link di accesso</button><p class="esito" role="status" aria-live="polite"></p>
+</form>
+<p class="nota">Questo account serve solo al sito vetrina cronoaste.cloud ed &egrave; diverso dalla registrazione al portale vendite, dove devi registrarti per presentare le offerte.</p>
+</div>
+<div id="acc-conferma" hidden>
+<h2>Conferma l'accesso</h2>
+<p>Premi il pulsante per completare l'accesso su questo dispositivo.</p>
+<button class="btn verde" type="button" id="acc-conferma-bt">Conferma accesso</button><p class="esito" id="acc-conferma-esito" role="status" aria-live="polite"></p>
+</div>
+<div id="acc-ok" hidden>
+<h2>Sei dentro</h2>
+<p id="acc-ok-txt"></p>
+<p><a class="btn verde" href="/beni-in-vendita/">Vai ai beni in vendita</a> <a class="btn vuoto" href="/account/">Il mio account</a></p>
+</div>
+</div></div></section>
