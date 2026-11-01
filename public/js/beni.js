@@ -169,7 +169,7 @@
       legaTab();return;
     }
     var tribs=['Tutti'];dati.forEach(function(l){if(l.tribunale&&tribs.indexOf(l.tribunale)<0)tribs.push(l.tribunale)});
-    var f=filtrati(),pp=per(),np=Math.max(1,Math.ceil(f.length/pp));if(st.n>=np)st.n=np-1;if(st.n<0)st.n=0;var mob=root.clientWidth<560,vis=mob?f.slice(0,(st.n+1)*pp):f.slice(st.n*pp,(st.n+1)*pp);
+    var f=filtrati(),pp=per(),np=Math.max(1,Math.ceil(f.length/pp));if(st.n>=np)st.n=np-1;if(st.n<0)st.n=0;var mob=true,vis=mob?f.slice(0,(st.n+1)*pp):f.slice(st.n*pp,(st.n+1)*pp);
     var h=tabs+'<div class="ca-top"><div class="ca-tools"><input type="search" id="ca-q" placeholder="Cerca un bene…" aria-label="Cerca un bene" value="'+esc(st.q)+'"><select id="ca-ord" aria-label="Ordina per">'+OPZ[st.tab].map(function(o){return '<option value="'+o[0]+'"'+(o[0]===st.ord?' selected':'')+'>'+o[1]+'</option>'}).join('')+'</select><select id="ca-trib" aria-label="Filtra per tribunale">'+tribs.map(function(t){return '<option value="'+esc(t)+'"'+(t===st.trib?' selected':'')+'>'+(t==='Tutti'?'Tutti i tribunali':esc(t))+'</option>'}).join('')+'</select></div></div>';
     h+='<div class="ca-grid">'+vis.map(card).join('')+'</div>';
     if(!f.length)h+='<p class="ca-msg">Nessun bene corrisponde alla ricerca.</p>';
