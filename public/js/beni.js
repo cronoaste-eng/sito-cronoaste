@@ -92,16 +92,15 @@
     var h='<div class="sc-wrap"><div class="sc-track" data-n="'+a.length+'">'+schede.join('')+'</div><button type="button" class="sc-fr sc-prev" data-sc="-1" aria-label="Beni precedenti">\u2039</button><button type="button" class="sc-fr sc-next" data-sc="1" aria-label="Beni successivi">\u203a</button></div>';
     if(h===scadHtml)return;
     scadHtml=h;scadEl.innerHTML=h;
-    // Giro continuo: se le schede non entrano tutte, si aggiunge una copia dopo l'ultima e si riavvolge senza che si veda.
+    // Giro continuo: se le schede non entrano tutte, si mette una copia prima e una dopo, si parte dalle vere e si riavvolge senza che si veda.
     var tr=scadEl.querySelector('.sc-track');
-    if(tr&&tr.scrollWidth>tr.clientWidth+4){tr.insertAdjacentHTML('beforeend',scadCloni);tr.setAttribute('data-loop','1')}
+    if(tr&&tr.scrollWidth>tr.clientWidth+4){tr.insertAdjacentHTML('beforeend',scadCloni);tr.insertAdjacentHTML('afterbegin',scadCloni);tr.setAttribute('data-loop','1');scadSalta(tr,scadSet(tr))}
     applicaLive();
   }
   if(scadEl)scadEl.addEventListener('click',function(e){
     try{
       var b=e.target.closest&&e.target.closest('.sc-fr');
       if(b){pausaScad(6000);var t=scadEl.querySelector('.sc-track'),dir=+b.getAttribute('data-sc');
-        if(dir<0&&t.getAttribute('data-loop')&&t.scrollLeft<=4)scadSalta(t,scadSet(t));
         t.scrollBy({left:dir*t.clientWidth*0.8,behavior:'smooth'});return}
       var c=e.target.closest&&e.target.closest('.ca-card');
       if(c&&typeof window.gtag==='function')window.gtag('event','clic_bene',{tribunale:c.getAttribute('data-tr')||'n.d.',procedura:c.getAttribute('data-pr')||'n.d.',sezione:'in_scadenza',posizione:Array.prototype.indexOf.call(c.parentNode.children,c)%(+c.parentNode.getAttribute('data-n')||99)+1,transport_type:'beacon'});
@@ -112,8 +111,9 @@
   var scadPausa=0,scadTimer=0;
   function pausaScad(ms){scadPausa=ms===Infinity?Infinity:Date.now()+ms}
   function scadSet(t){var n=+t.getAttribute('data-n');return n&&t.children[n]?t.children[n].offsetLeft-t.children[0].offsetLeft:0}
+  function scadFine(t){var n=+t.getAttribute('data-n');return n&&t.children[2*n]?t.children[2*n].offsetLeft-t.children[0].offsetLeft:0}
   function scadSalta(t,x){t.style.scrollSnapType='none';t.style.scrollBehavior='auto';t.scrollLeft=x;t.style.scrollBehavior='';requestAnimationFrame(function(){t.style.scrollSnapType=''})}
-  function scadRiavvolgi(t){if(!t.getAttribute('data-loop'))return;var s=scadSet(t);if(s&&t.scrollLeft>=s-1)scadSalta(t,t.scrollLeft-s)}
+  function scadRiavvolgi(t){if(!t.getAttribute('data-loop'))return;var s=scadSet(t),f=scadFine(t),x=t.scrollLeft;if(!s||!f)return;if(x>=f-1)scadSalta(t,x-s);else if(x<s-1)scadSalta(t,x+s)}
   if(scadEl){
     ['mouseenter','touchstart','focusin'].forEach(function(n){scadEl.addEventListener(n,function(){pausaScad(Infinity)},{passive:true})});
     ['mouseleave','touchend','touchcancel','focusout'].forEach(function(n){scadEl.addEventListener(n,function(){pausaScad(3500)},{passive:true})});
