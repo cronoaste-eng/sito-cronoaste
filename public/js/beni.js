@@ -6,10 +6,10 @@
   var root=document.getElementById('ca-beni');
   if(!root)return;
   var HOME=root.hasAttribute('data-home');
-  var st={tab:'attivi',trib:'Tutti',q:'',ord:'nuovi',n:0,attivi:null,archivio:null,err:{},live:{}};
+  var st={tab:'attivi',trib:'Tutti',cat:'Tutte',q:'',ord:'nuovi',n:0,attivi:null,archivio:null,err:{},live:{}};
   function per(){var w=root.clientWidth||320;if(w<560)return 10;var c=Math.max(2,Math.floor((w+18)/278));return c*2}
-  if(!HOME)try{var sv=JSON.parse(sessionStorage.getItem('ca_st')||'null');if(sv&&typeof sv==='object'){if(sv.tab==='attivi'||sv.tab==='archivio')st.tab=sv.tab;if(typeof sv.trib==='string')st.trib=sv.trib.slice(0,60);if(typeof sv.q==='string')st.q=sv.q.slice(0,80);if(typeof sv.ord==='string')st.ord=sv.ord;if(typeof sv.n==='number'&&sv.n>=0&&sv.n<1000)st.n=Math.floor(sv.n)}}catch(x){}
-  function salva(){if(HOME)return;try{sessionStorage.setItem('ca_st',JSON.stringify({tab:st.tab,trib:st.trib,q:st.q,ord:st.ord,n:st.n}))}catch(x){}}
+  if(!HOME)try{var sv=JSON.parse(sessionStorage.getItem('ca_st')||'null');if(sv&&typeof sv==='object'){if(sv.tab==='attivi'||sv.tab==='archivio')st.tab=sv.tab;if(typeof sv.trib==='string')st.trib=sv.trib.slice(0,60);if(typeof sv.cat==='string')st.cat=sv.cat.slice(0,30);if(typeof sv.q==='string')st.q=sv.q.slice(0,80);if(typeof sv.ord==='string')st.ord=sv.ord;if(typeof sv.n==='number'&&sv.n>=0&&sv.n<1000)st.n=Math.floor(sv.n)}}catch(x){}
+  function salva(){if(HOME)return;try{sessionStorage.setItem('ca_st',JSON.stringify({tab:st.tab,trib:st.trib,cat:st.cat,q:st.q,ord:st.ord,n:st.n}))}catch(x){}}
   function okurl(u,host){u=String(u==null?'':u);if(!/^https:\/\/[^\s"'<>]+$/.test(u))return '';try{var x=new URL(u);return x.protocol==='https:'&&x.hostname===host&&!x.username&&!x.password?u:''}catch(e){return ''}}
   function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
   function euro(n){if(n==null)return '—';var p=Number(n).toFixed(2).split('.');return p[0].replace(/\B(?=(\d{3})+(?!\d))/g,'.')+','+p[1]}
@@ -65,7 +65,10 @@
   // Un lotto chiuso da poco (lo dice live.json) sparisce subito da "In vendita", senza aspettare l'aggiornamento orario.
   function chiusa(l){var v=st.live[l.id];return !!v&&v.stato==='conclusa'}
   function lista(){return st.tab==='attivi'?st.attivi:st.archivio}
-  function filtrati(){var q=st.q.toLowerCase();return ordina((lista()||[]).filter(function(l){return !(st.tab==='attivi'&&chiusa(l))&&(st.trib==='Tutti'||l.tribunale===st.trib)&&(!q||(l.titolo+' '+l.tribunale).toLowerCase().indexOf(q)>-1)}))}
+  var CATN={MOBILI:'Mobili',IMMOBILI:'Immobili',AZIENDE:'Aziende','VALORI/CREDITI':'Crediti e valori'};
+  var RE_IMM=/^\s*(terren|immobil|appartament|fabbricat|box\b|autorimess|garage|villa|capannon|quota[^.]{0,40}(propriet|immobil|autorimess)|(piena )?propriet[^.]{0,40}(terren|immobil|fabbricat))/i,RE_AZ=/(compendio aziendale|ramo d.azienda|affitto d.azienda|cessione d.azienda|marchio non registrato)/i;
+  function genere(l){var g=CATN[String(l.genere||'').toUpperCase()];if(g)return g;var t=String(l.titolo||'');return RE_IMM.test(t)?'Immobili':RE_AZ.test(t)?'Aziende':'Mobili'}
+  function filtrati(){var q=st.q.toLowerCase();return ordina((lista()||[]).filter(function(l){return !(st.tab==='attivi'&&chiusa(l))&&(st.trib==='Tutti'||l.tribunale===st.trib)&&(st.cat==='Tutte'||genere(l)===st.cat)&&(!q||(l.titolo+' '+l.tribunale).toLowerCase().indexOf(q)>-1)}))}
   var CUORE='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7.5-4.6-7.5-10A4.3 4.3 0 0 1 12 7.4 4.3 4.3 0 0 1 19.5 10c0 5.4-7.5 10-7.5 10z"/></svg>';
   function prefLeggi(){try{var a=JSON.parse(localStorage.getItem('ca_pref')||'[]');return Array.isArray(a)?a:[]}catch(e){return []}}
   function prefHa(id){return prefLeggi().some(function(x){return x&&String(x.id)===String(id)})}
@@ -169,8 +172,10 @@
       legaTab();return;
     }
     var tribs=['Tutti'];dati.forEach(function(l){if(l.tribunale&&tribs.indexOf(l.tribunale)<0)tribs.push(l.tribunale)});
+    var cn={};dati.forEach(function(l){if(st.tab==='attivi'&&chiusa(l))return;var g=genere(l);cn[g]=(cn[g]||0)+1});
+    var cats=['Mobili','Immobili','Aziende','Crediti e valori'].filter(function(c){return cn[c]});if(st.cat!=='Tutte'&&cats.indexOf(st.cat)<0)st.cat='Tutte';
     var f=filtrati(),pp=per(),np=Math.max(1,Math.ceil(f.length/pp));if(st.n>=np)st.n=np-1;if(st.n<0)st.n=0;var mob=true,vis=mob?f.slice(0,(st.n+1)*pp):f.slice(st.n*pp,(st.n+1)*pp);
-    var h=tabs+'<div class="ca-top"><div class="ca-tools"><input type="search" id="ca-q" placeholder="Cerca un bene…" aria-label="Cerca un bene" value="'+esc(st.q)+'"><select id="ca-ord" aria-label="Ordina per">'+OPZ[st.tab].map(function(o){return '<option value="'+o[0]+'"'+(o[0]===st.ord?' selected':'')+'>'+o[1]+'</option>'}).join('')+'</select><select id="ca-trib" aria-label="Filtra per tribunale">'+tribs.map(function(t){return '<option value="'+esc(t)+'"'+(t===st.trib?' selected':'')+'>'+(t==='Tutti'?'Tutti i tribunali':esc(t))+'</option>'}).join('')+'</select></div></div>';
+    var h=tabs+'<div class="ca-top"><div class="ca-tools"><input type="search" id="ca-q" placeholder="Cerca un bene…" aria-label="Cerca un bene" value="'+esc(st.q)+'"><select id="ca-ord" aria-label="Ordina per">'+OPZ[st.tab].map(function(o){return '<option value="'+o[0]+'"'+(o[0]===st.ord?' selected':'')+'>'+o[1]+'</option>'}).join('')+'</select><select id="ca-trib" aria-label="Filtra per tribunale">'+tribs.map(function(t){return '<option value="'+esc(t)+'"'+(t===st.trib?' selected':'')+'>'+(t==='Tutti'?'Tutti i tribunali':esc(t))+'</option>'}).join('')+'</select>'+(cats.length>1?'<select id="ca-cat" aria-label="Filtra per categoria"><option value="Tutte">Tutte le categorie</option>'+cats.map(function(c){return '<option value="'+esc(c)+'"'+(c===st.cat?' selected':'')+'>'+esc(c)+' ('+cn[c]+')</option>'}).join('')+'</select>':'')+'</div></div>';
     h+='<div class="ca-grid">'+vis.map(card).join('')+'</div>';
     if(!f.length)h+='<p class="ca-msg">Nessun bene corrisponde alla ricerca.</p>';
     if(mob){if(np>1&&st.n<np-1)h+='<nav class="ca-pag ca-more" aria-label="Altri beni"><button type="button" class="ca-pb ca-pbm" id="ca-more">Mostra altri beni</button><span class="ca-cnt" id="ca-cnt">'+vis.length+' di '+f.length+'</span></nav>';else if(np>1)h+='<p class="ca-msg ca-fine">Hai visto tutti i '+f.length+' beni.</p>'}
@@ -178,6 +183,7 @@
     root.innerHTML=h;legaTab();salva();applicaLive();
     var q=document.getElementById('ca-q');
     q.addEventListener('input',function(e){if(e.target.value===st.q)return;st.q=e.target.value;st.n=0;var pos=e.target.selectionStart;disegna();var n=document.getElementById('ca-q');n.focus();n.setSelectionRange(pos,pos)});
+    var ce=document.getElementById('ca-cat');if(ce)ce.addEventListener('change',function(e){if(e.target.value===st.cat)return;st.cat=e.target.value;st.n=0;disegna()});
     document.getElementById('ca-trib').addEventListener('change',function(e){if(e.target.value===st.trib)return;st.trib=e.target.value;st.n=0;disegna()});
     document.getElementById('ca-ord').addEventListener('change',function(e){if(e.target.value===st.ord)return;st.ord=e.target.value;st.n=0;disegna()});
     var pv=document.getElementById('ca-prev'),nx=document.getElementById('ca-next');
@@ -206,7 +212,7 @@
   }
   function legaTab(){
     Array.prototype.forEach.call(root.querySelectorAll('.ca-tab'),function(b){b.addEventListener('click',function(){
-      st.tab=b.getAttribute('data-k');st.ord=st.tab==='attivi'?'nuovi':'rec';st.trib='Tutti';st.q='';st.n=0;disegna();
+      st.tab=b.getAttribute('data-k');st.ord=st.tab==='attivi'?'nuovi':'rec';st.trib='Tutti';st.cat='Tutte';st.q='';st.n=0;disegna();
       carica(st.tab,st.tab==='attivi'?'lotti.json':'archivio.json').then(disegna);
     })});
   }

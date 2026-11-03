@@ -76,3 +76,5 @@
 :is(#ca-beni,#ca-scad) .ca-pbm{width:100%;max-width:340px;padding:14px 18px;font-size:16px;background:var(--ca-brand);color:#fff;border-color:var(--ca-brand)}
 :is(#ca-beni,#ca-scad) .ca-cnt{font-size:13px;color:var(--ca-mut);font-weight:600}
 :is(#ca-beni,#ca-scad) .ca-fine{text-align:center;margin-top:18px}
+
+@container (max-width:420px){:is(#ca-beni,#ca-scad) #ca-cat{grid-column:1/-1}}
