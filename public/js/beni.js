@@ -68,7 +68,7 @@
   var CATN={MOBILI:'Mobili',IMMOBILI:'Immobili',AZIENDE:'Aziende','VALORI/CREDITI':'Crediti e valori'};
   var RE_IMM=/^\s*(terren|immobil|appartament|fabbricat|box\b|autorimess|garage|villa|capannon|quota[^.]{0,40}(propriet|immobil|autorimess)|(piena )?propriet[^.]{0,40}(terren|immobil|fabbricat))/i,RE_AZ=/(compendio aziendale|ramo d.azienda|affitto d.azienda|cessione d.azienda|marchio non registrato)/i;
   function genere(l){var g=CATN[String(l.genere||'').toUpperCase()];if(g)return g;var t=String(l.titolo||'');return RE_IMM.test(t)?'Immobili':RE_AZ.test(t)?'Aziende':'Mobili'}
-  function filtrati(){var q=st.q.toLowerCase();return ordina((lista()||[]).filter(function(l){return !(st.tab==='attivi'&&chiusa(l))&&(st.trib==='Tutti'||l.tribunale===st.trib)&&(st.cat==='Tutte'||genere(l)===st.cat)&&(!q||(l.titolo+' '+l.tribunale).toLowerCase().indexOf(q)>-1)}))}
+  function filtrati(){var qt=st.q.toLowerCase().split(/\s+/).filter(Boolean);return ordina((lista()||[]).filter(function(l){return !(st.tab==='attivi'&&chiusa(l))&&(st.trib==='Tutti'||l.tribunale===st.trib)&&(st.cat==='Tutte'||genere(l)===st.cat)&&(!qt.length||(function(){var h=(String(l.titolo||'')+' '+String(l.tribunale||'')+' proc. n. '+String(l.procedura||'')+' '+String(l.lotto||'')+' '+String(l.id||'')).toLowerCase();return qt.every(function(w){return h.indexOf(w)>-1})})())}))}
   var CUORE='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7.5-4.6-7.5-10A4.3 4.3 0 0 1 12 7.4 4.3 4.3 0 0 1 19.5 10c0 5.4-7.5 10-7.5 10z"/></svg>';
   function prefLeggi(){try{var a=JSON.parse(localStorage.getItem('ca_pref')||'[]');return Array.isArray(a)?a:[]}catch(e){return []}}
   function prefHa(id){return prefLeggi().some(function(x){return x&&String(x.id)===String(id)})}
