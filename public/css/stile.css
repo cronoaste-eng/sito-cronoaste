@@ -27,7 +27,7 @@ section{padding:28px 0}
 .hamb{background:none;border:1px solid var(--bordo);border-radius:10px;width:44px;height:44px;font-size:22px;color:var(--blu);cursor:pointer}
 .menu.aperto{display:block;position:absolute;left:0;right:0;top:102px;background:#fff;border-bottom:1px solid var(--bordo);padding:8px 16px 14px}
 .menu.aperto a{padding:12px 8px;font-size:16px;border-radius:10px}
-@media(min-width:980px){.menu{display:flex}.hamb{display:none}}
+@media(min-width:980px){.menu,.menu.aperto{display:flex;position:static;border:0;padding:0;background:none}.menu.aperto a{padding:8px 10px;font-size:13px;border-radius:999px}.hamb{display:none}}
 /* bottoni */
 .btn{display:inline-block;padding:12px 22px;border-radius:999px;font-weight:700;font-size:15px;text-decoration:none;border:2px solid var(--blu);background:var(--blu);color:#fff;cursor:pointer}
 .btn:hover{background:#0e2644}
