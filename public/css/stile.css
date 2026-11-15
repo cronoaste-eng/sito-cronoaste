@@ -61,7 +61,7 @@ a.scheda:hover .vai:after{content:"\00a0\2192\2192"}
 @media(min-width:760px){h1,.eroe h1{font-size:38px}h2{font-size:26px}section{padding:40px 0}}
 /* pie */
 .pie{background:#0b1f47;color:#cfe0f2;margin-top:36px;padding:30px 0 18px;font-size:14px}
-.pie a{color:#fff;text-decoration:none}.pie a:hover{text-decoration:underline}
+.pie a{color:#fff;text-decoration:none}.pie a:hover{text-decoration:underline}.pie a.lk{text-decoration:underline}
 .pie h2{color:#fff;font-size:13px}
 .pie .griglia{gap:22px}
 @media(min-width:760px){.pie .griglia{grid-template-columns:1.2fr 1fr 1fr 1fr}}
@@ -127,15 +127,15 @@ body>main{flex:1 0 auto}
 .menu a:hover,.menu a[aria-current=page]{background:#e6eef8;color:#2f5f9e}
 
 /* eccezione voluta: le porte "Come possiamo aiutarti" e il pulsante del bollettino restano verdi */
-.porte,.fascia{--verde:#0f9d94}
-.porta .ico{background:#eef6f6;color:#0f9d94}
+.porte,.fascia{--verde:#0b7f78}
+.porta .ico{background:#eef6f6;color:#0b7f78}
 .porta.primaria .ico{background:#0b7f78;color:#fff}
 .porta.primaria .vai{background:#0b7f78;color:#fff}
 .fascia .btn.verde{background:#0b7f78;border-color:#0b7f78}.fascia .btn.verde:hover{background:#096a64}
 
 /* Pulsante chat WhatsApp (sessione 10): logo ufficiale, verde WhatsApp */
-.wa-chat{position:fixed;right:max(16px,env(safe-area-inset-right));bottom:max(16px,env(safe-area-inset-bottom));z-index:90;width:40px;height:40px;border-radius:50%;background:#25d366;border:0;box-shadow:0 2px 10px rgba(20,50,92,.28);color:#fff;display:flex;align-items:center;justify-content:center;text-decoration:none;transition:background .15s}
-.wa-chat:hover,.wa-chat:focus-visible{background:#1ebe5a}
+.wa-chat{position:fixed;right:max(16px,env(safe-area-inset-right));bottom:max(16px,env(safe-area-inset-bottom));z-index:90;width:40px;height:40px;border-radius:50%;background:#1a9a52;border:0;box-shadow:0 2px 10px rgba(20,50,92,.28);color:#fff;display:flex;align-items:center;justify-content:center;text-decoration:none;transition:background .15s}
+.wa-chat:hover,.wa-chat:focus-visible{background:#128c4a}
 .wa-chat:focus-visible{outline:2px solid #14325c;outline-offset:2px}
 body:has(#cc) .wa-chat{display:none}
 .pie{padding-bottom:max(18px,env(safe-area-inset-bottom))}
