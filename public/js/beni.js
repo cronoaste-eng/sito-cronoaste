@@ -39,9 +39,12 @@
     return fetch(BASE+file+'?t='+Math.floor(Date.now()/600000)).then(function(r){if(!r.ok)throw 0;return r.json()}).then(function(d){st[chiave]=d.lotti||[]}).catch(function(){st.err[chiave]=true});
   }
   // Aste in corso: "Asta in corso" e miglior offerta. Prima il Worker (aggiornato ogni pochi secondi), se non risponde il file su GitHub (~1 minuto).
+  // Risparmio richieste al Worker (piano gratuito: 100.000/giorno): se il Worker da errore si usa GitHub per 10 minuti.
+  var workerOff=0;
   function leggiLive(){
-    return fetch(LIVE).then(function(r){if(!r.ok)throw 0;return r.json()}).catch(function(){
-      return fetch(BASE+'live.json?t='+Math.floor(Date.now()/60000)).then(function(r){if(!r.ok)throw 0;return r.json()})});
+    var daGit=function(){return fetch(BASE+'live.json?t='+Math.floor(Date.now()/60000)).then(function(r){if(!r.ok)throw 0;return r.json()})};
+    if(Date.now()<workerOff)return daGit();
+    return fetch(LIVE).then(function(r){if(!r.ok)throw 0;return r.json()}).catch(function(){workerOff=Date.now()+600000;return daGit()});
   }
   function applicaLive(){
     Array.prototype.forEach.call(document.querySelectorAll('#ca-beni .ca-card[data-id],#ca-scad .ca-card[data-id]'),function(a){
@@ -230,6 +233,12 @@
   });
   var ultimo=per();window.addEventListener('resize',function(){if(per()!==ultimo){ultimo=per();disegna()}});
   disegna();
-  caricaLive(true);setInterval(caricaLive,30000);document.addEventListener('visibilitychange',function(){if(!document.hidden)caricaLive(true)});
+  caricaLive(true);
+  // Aggiorna ogni 30 s solo se la persona e' attiva: dopo 5 minuti senza interazioni si ferma e riparte al primo gesto.
+  var ultimoUso=Date.now(),PAUSA=300000;
+  setInterval(function(){if(Date.now()-ultimoUso<PAUSA)caricaLive()},30000);
+  function gesto(){var dormiva=Date.now()-ultimoUso>=PAUSA;ultimoUso=Date.now();if(dormiva)caricaLive(true)}
+  ['pointerdown','keydown','scroll','touchstart'].forEach(function(ev){window.addEventListener(ev,gesto,{passive:true})});
+  document.addEventListener('visibilitychange',function(){if(!document.hidden)caricaLive(true)});
   carica('attivi','lotti.json').then(function(){disegna();if(HOME)return;carica('archivio','archivio.json').then(function(){if(st.tab==='archivio'||st.archivio)disegna()})});
 })();
