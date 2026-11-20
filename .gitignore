@@ -1,1 +1,11 @@
 .DS_Store
+
+# Segreti: non vanno mai su GitHub
+.env
+.env.*
+.dev.vars
+*.pem
+*.key
+wrangler.toml
+.wrangler/
+node_modules/
