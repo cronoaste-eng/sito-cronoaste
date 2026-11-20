@@ -78,3 +78,10 @@
 :is(#ca-beni,#ca-scad) .ca-fine{text-align:center;margin-top:18px}
 
 @container (max-width:420px){:is(#ca-beni,#ca-scad) #ca-cat{grid-column:1/-1}}
+
+/* Etichetta visite (in basso a destra sulla foto): neutra, calda da 300, rossa con fiamma da 1000 */
+:is(#ca-beni,#ca-scad) .ca-vis{position:absolute;right:10px;bottom:10px;display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.95);color:#14325c;font-size:12px;font-weight:700;padding:3px 10px 3px 8px;border-radius:999px;box-shadow:0 1px 4px rgba(16,36,62,.18);white-space:nowrap}
+:is(#ca-beni,#ca-scad) .ca-vis svg{width:14px;height:14px;flex:none;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+:is(#ca-beni,#ca-scad) .ca-vis.ca-v2{background:#fff4e0;color:#8a4b00}
+:is(#ca-beni,#ca-scad) .ca-vis.ca-v3{background:#fdeaea;color:#a31621}
+#ca-scad .ca-vis{display:none}

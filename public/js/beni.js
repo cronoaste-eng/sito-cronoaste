@@ -36,7 +36,12 @@
   if(!OPZ[st.tab].some(function(o){return o[0]===st.ord}))st.ord=st.tab==='attivi'?'nuovi':'rec';
   function carica(chiave,file){
     if(st[chiave]||st.err[chiave])return Promise.resolve();
-    return fetch(BASE+file+'?t='+Math.floor(Date.now()/600000)).then(function(r){if(!r.ok)throw 0;return r.json()}).then(function(d){st[chiave]=d.lotti||[]}).catch(function(){st.err[chiave]=true});
+    return fetch(BASE+file+'?t='+Math.floor(Date.now()/600000)).then(function(r){if(!r.ok)throw 0;return r.json()}).then(function(d){st[chiave]=d.lotti||[]}).catch(function(){st.err[chiave]=true}).then(caricaVis);
+  }
+  // Numero di visite per lotto (file data/visite.json, aggiornato ogni ora). Se manca, le schede restano senza etichetta.
+  function caricaVis(){
+    if(st.vis)return Promise.resolve();
+    return fetch(BASE+'visite.json?t='+Math.floor(Date.now()/600000)).then(function(r){if(!r.ok)throw 0;return r.json()}).then(function(d){st.vis=d&&typeof d==='object'?d:{}}).catch(function(){st.vis={}});
   }
   // Aste in corso: "Asta in corso" e miglior offerta. Prima il Worker (aggiornato ogni pochi secondi), se non risponde il file su GitHub (~1 minuto).
   // Risparmio richieste al Worker (piano gratuito: 100.000/giorno): se il Worker da errore si usa GitHub per 10 minuti.
@@ -72,6 +77,10 @@
   var RE_IMM=/^\s*(terren|immobil|appartament|fabbricat|box\b|autorimess|garage|villa|capannon|quota.{0,80}(propriet|immobil|autorimess)|(piena )?propriet[^.]{0,40}(terren|immobil|fabbricat))/i,RE_AZ=/(compendio aziendale|ramo d[i' ]\s*azienda|affitto d[i' ]\s*azienda|cessione d.azienda|marchio non registrato)/i;
   function genere(l){var g=CATN[String(l.genere||'').toUpperCase()];if(g)return g;var t=String(l.titolo||'');return RE_IMM.test(t)?'Immobili':RE_AZ.test(t)?'Aziende':'Mobili'}
   function filtrati(senzaCat){var qt=st.q.toLowerCase().split(/\s+/).filter(Boolean);return ordina((lista()||[]).filter(function(l){return !(st.tab==='attivi'&&chiusa(l))&&(st.trib==='Tutti'||l.tribunale===st.trib)&&(senzaCat||st.cat==='Tutte'||genere(l)===st.cat)&&(!qt.length||(function(){var h=(String(l.titolo||'')+' '+String(l.tribunale||'')+' proc. n. '+String(l.procedura||'')+' '+String(l.lotto||'')+' '+String(l.id||'')).toLowerCase();return qt.every(function(w){return h.indexOf(w)>-1})})())}))}
+  var OCCHIO='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>';
+  var FIAMMA='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.4-.5-2-1-3-1.1-2.1-.2-4.1 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.2.4-2.3 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>';
+  // Etichetta visite: neutra sotto 300, calda da 300, rossa con fiamma da 1000.
+  function visite(l){var n=st.vis&&st.vis[l.id];if(typeof n!=='number'||n<1)return'';var c=n>=1000?' ca-v3':n>=300?' ca-v2':'';return'<span class="ca-vis'+c+'">'+(n>=1000?FIAMMA:OCCHIO)+n.toLocaleString('it-IT')+(n===1?' visita':' visite')+'</span>'}
   var CUORE='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7.5-4.6-7.5-10A4.3 4.3 0 0 1 12 7.4 4.3 4.3 0 0 1 19.5 10c0 5.4-7.5 10-7.5 10z"/></svg>';
   function prefLeggi(){try{var a=JSON.parse(localStorage.getItem('ca_pref')||'[]');return Array.isArray(a)?a:[]}catch(e){return []}}
   function prefHa(id){return prefLeggi().some(function(x){return x&&String(x.id)===String(id)})}
@@ -107,7 +116,7 @@
     var prezzo=min?l.prezzo_minimo:l.prezzo;
     var lab=min?'Offerta minima':(old?(l.etichetta||'Prezzo base'):'Prezzo base');
     var righe=old?'<span>Conclusa il '+esc(giorno(l.termine))+'</span>':'<span>Inizio asta: '+esc(l.inizio)+'</span>'+dep(l);
-    return '<a class="ca-card'+(old?' ca-old':'')+'" data-id="'+esc(l.id)+'" data-bl="'+esc(lab)+'" data-bv="€ '+euro(prezzo)+'" data-tr="'+esc(l.tribunale||'')+'" data-pr="'+esc(l.procedura||'')+'" href="'+esc(okurl(l.url,HOST_URL)||PIATTAFORMA)+'" target="_blank" rel="noopener"><div class="ca-ph">'+(okurl(l.foto,HOST_FOTO)?'<img loading="lazy" src="'+esc(okurl(l.foto,HOST_FOTO))+'" alt="">':'')+'<span class="ca-tag">Trib. '+esc(l.tribunale||'—')+'</span>'+esito+'<span class="ca-live"><i></i>Asta in corso</span></div><div class="ca-b"><div class="ca-meta">Proc. n. '+esc(l.procedura)+' · '+esc(l.tipo)+'</div><h2 class="ca-t">'+esc(l.titolo)+'</h2><div class="ca-d">'+righe+'</div><div class="ca-p"><span class="ca-pl">'+esc(lab)+'</span><b class="ca-pv">€ '+euro(prezzo)+'</b></div></div></a>';
+    return '<a class="ca-card'+(old?' ca-old':'')+'" data-id="'+esc(l.id)+'" data-bl="'+esc(lab)+'" data-bv="€ '+euro(prezzo)+'" data-tr="'+esc(l.tribunale||'')+'" data-pr="'+esc(l.procedura||'')+'" href="'+esc(okurl(l.url,HOST_URL)||PIATTAFORMA)+'" target="_blank" rel="noopener"><div class="ca-ph">'+(okurl(l.foto,HOST_FOTO)?'<img loading="lazy" src="'+esc(okurl(l.foto,HOST_FOTO))+'" alt="">':'')+'<span class="ca-tag">Trib. '+esc(l.tribunale||'—')+'</span>'+esito+'<span class="ca-live"><i></i>Asta in corso</span>'+visite(l)+'</div><div class="ca-b"><div class="ca-meta">Proc. n. '+esc(l.procedura)+' · '+esc(l.tipo)+'</div><h2 class="ca-t">'+esc(l.titolo)+'</h2><div class="ca-d">'+righe+'</div><div class="ca-p"><span class="ca-pl">'+esc(lab)+'</span><b class="ca-pv">€ '+euro(prezzo)+'</b></div></div></a>';
   }
   // Carosello "Beni in scadenza": i 8 lotti attivi con il termine di deposito piu' vicino (scad), solo se ancora in tempo.
   var scadEl=document.getElementById('ca-scad'),scadHtml='',scadCloni='';
