@@ -14,7 +14,7 @@ export async function onRequestPost({ request, env }) {
   if (!t0 || Date.now() - t0 < 2000) return json({ ok: false, msg: 'Riprova tra qualche secondo.' }, 400);
   const email = String(b.email || '').trim().toLowerCase();
   if (!EMAIL_OK(email)) return json({ ok: false, msg: 'Controlla l\'indirizzo email.' }, 400);
-  if (b.consenso !== true) return json({ ok: false, msg: 'Serve il consenso al trattamento dei dati.' }, 400);
+  if (b.consenso !== true) return json({ ok: false, msg: 'Conferma di aver letto l\'informativa privacy.' }, 400); // consenso = presa visione dell'informativa; i promemoria hanno il loro consenso separato (b.promemoria)
   if (!(await limite(env, 'ip:' + (await ipHash(request)), 5, 3600))) return json({ ok: false, msg: 'Troppi tentativi. Riprova tra un\'ora.' }, 429);
   if (env.TURNSTILE_SECRET) { // controllo anti-robot di Cloudflare (gratuito, invisibile)
     const tk = String(b.turnstile || '').slice(0, 2100);
@@ -28,7 +28,7 @@ export async function onRequestPost({ request, env }) {
   if (!(await limite(env, 'em:' + (await sha256(email)), 3, 3600))) return json(generica); // niente informazioni su chi ha troppe richieste
   if (Math.random() < 0.05) await pulisci(env);
   const t = token();
-  await env.DB.prepare('INSERT INTO link_accesso (hash, email, scade, consenso) VALUES (?, ?, ?, ?)').bind(await sha256(t), email, Math.floor(Date.now() / 1000) + 900, Math.floor(Date.now() / 1000)).run();
+  await env.DB.prepare('INSERT INTO link_accesso (hash, email, scade, consenso, promemoria) VALUES (?, ?, ?, ?, ?)').bind(await sha256(t), email, Math.floor(Date.now() / 1000) + 900, Math.floor(Date.now() / 1000), b.promemoria === true ? 1 : 0).run();
   const link = SITO + '/accedi/?t=' + t;
   const html = '<div style="font-family:Arial,sans-serif;color:#10243e;max-width:520px"><h2 style="color:#14325c">Accedi a Crono Aste</h2><p>Hai chiesto di accedere al tuo account su cronoaste.cloud. Clicca il pulsante per continuare: il link vale 15 minuti e si pu&ograve; usare una sola volta.</p><p><a href="' + esc(link) + '" style="background:#2f5f9e;color:#fff;padding:12px 20px;border-radius:8px;text-decoration:none;display:inline-block">Accedi</a></p><p style="color:#5a6b82;font-size:13px">Se non hai fatto tu la richiesta, ignora questa email: nessun accesso verr&agrave; effettuato.</p></div>';
   const text = 'Accedi a Crono Aste: apri questo link entro 15 minuti (si usa una sola volta):\n' + link + '\n\nSe non hai fatto tu la richiesta, ignora questa email.';

@@ -43,10 +43,10 @@ if(f){
   f.addEventListener('submit',function(e){e.preventDefault();
     var em=f.email.value.trim();
     if(!em){es.className='esito ko';es.textContent='Scrivi la tua email.';return}
-    if(!f.consenso.checked){es.className='esito ko';es.textContent='Serve il consenso al trattamento dei dati.';return}
+    if(!f.consenso.checked){es.className='esito ko';es.textContent='Conferma di aver letto l\'informativa privacy.';return}
     es.className='esito';es.textContent='Invio in corso...';sb.disabled=true;
     var tkn=f.querySelector('[name=cf-turnstile-response]');
-    api('POST','/api/accedi',{email:em,consenso:true,t0:t0.value,sito_web:f.sito_web.value,turnstile:tkn?tkn.value:''}).then(function(j){
+    api('POST','/api/accedi',{email:em,consenso:true,promemoria:!!(f.promemoria&&f.promemoria.checked),t0:t0.value,sito_web:f.sito_web.value,turnstile:tkn?tkn.value:''}).then(function(j){
       try{if(window.turnstile)window.turnstile.reset()}catch(x){}
       es.className='esito '+(j.ok?'ok':'ko');es.textContent=j.msg||(j.ok?'Fatto.':'Errore.');sb.disabled=false;
       if(j.ok){f.reset();t0.value=Date.now()}

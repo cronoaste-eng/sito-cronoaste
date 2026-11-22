@@ -55,10 +55,15 @@ export async function pulisci(env) {
     env.DB.prepare('DELETE FROM limiti WHERE finestra < ?').bind(Math.floor(ora / 3600) - 48)
   ]);
 }
-export async function brevo(env, { to, subject, html, text }) {
+// Firma HMAC per il link "disattiva promemoria" nelle email (usa la chiave CHIAVE_PROMEMORIA, mai esposta).
+export async function firma(env, testo) {
+  const k = await crypto.subtle.importKey('raw', new TextEncoder().encode(String(env.CHIAVE_PROMEMORIA || '')), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);
+  return hex(await crypto.subtle.sign('HMAC', k, new TextEncoder().encode(testo)));
+}
+export async function brevo(env, { to, subject, html, text, headers }) {
   const chiave = env.BREVO_API_KEY_2 || env.BREVO_API_KEY;
   if (!chiave) return false;
-  const r = await fetch('https://api.brevo.com/v3/smtp/email', { method: 'POST', headers: { 'api-key': chiave, 'content-type': 'application/json', accept: 'application/json' }, body: JSON.stringify({ sender: { name: 'Crono Aste', email: env.MAIL_FROM || 'info@cronoaste.it' }, to: [{ email: to }], subject, htmlContent: html, textContent: text }) });
+  const r = await fetch('https://api.brevo.com/v3/smtp/email', { method: 'POST', headers: { 'api-key': chiave, 'content-type': 'application/json', accept: 'application/json' }, body: JSON.stringify({ sender: { name: 'Crono Aste', email: env.MAIL_FROM || 'info@cronoaste.it' }, to: [{ email: to }], subject, htmlContent: html, textContent: text, ...(headers ? { headers } : {}) }) });
   return r.ok;
 }
 export const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));

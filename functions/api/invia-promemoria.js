@@ -1,6 +1,6 @@
 // POST /api/invia-promemoria (header X-Chiave-Promemoria = secret CHIAVE_PROMEMORIA): chiamato ogni mattina da GitHub Actions.
 // Per ogni bene salvato da un utente con promemoria attivi, manda UNA email 2 giorni e UNA 1 giorno prima della scadenza del deposito.
-import { json, brevo, esc, urlOk, pulisci } from '../_lib/util.js';
+import { json, brevo, esc, urlOk, pulisci, firma, SITO } from '../_lib/util.js';
 
 const HOST_VENDITE = 'cronoaste.fallcoaste.it';
 const MAX_PER_GIRO = 100; // Brevo gratuito: 300 email al giorno in totale (moduli compresi)
@@ -19,14 +19,14 @@ function scadenza(l) { // stessa regola del sito: il termine di deposito piu' vi
   if (c.length) return c.reduce((a, b) => (b.ms < a.ms ? b : a));
   const ms = romaMs(l.termine); return ms != null ? { s: l.termine, ms } : null;
 }
-function messaggio(it, link, quando) {
+function messaggio(it, link, quando, disattiva) {
   const titolo = String(it.t || 'Bene salvato'), trib = it.tr ? 'Trib. ' + it.tr : '';
   const html = '<div style="font-family:Arial,sans-serif;color:#10243e;max-width:560px;line-height:1.5"><p>Ciao,</p><p>ti ricordiamo che il termine per depositare l\'offerta per questo bene scade il <b>' + esc(quando) + '</b>: ' + esc(titolo) + (trib ? ' (' + esc(trib) + ')' : '') + '.</p>'
     + '<p><a href="' + esc(link) + '" style="background:#2f5f9e;color:#fff;padding:12px 20px;border-radius:8px;text-decoration:none;display:inline-block">Vai alla scheda del bene</a></p>'
     + '<p>Questa email &egrave; solo un promemoria: cronoaste.cloud &egrave; un sito vetrina e non si possono presentare offerte da qui. Per partecipare vai alla pagina della vendita sul portale (<a href="https://cronoaste.fallcoaste.it">cronoaste.fallcoaste.it</a>) e segui le indicazioni della vendita.</p>'
     + '<p>Se hai bisogno di assistenza scrivici a <a href="mailto:info@cronoaste.it">info@cronoaste.it</a>, chiamaci o scrivici su <a href="https://wa.me/393501389723">WhatsApp</a> al 350 138 9723: ti aiutiamo gratuitamente per le vendite gestite da noi.</p>'
-    + '<p style="color:#5a6b82;font-size:13px">Per non ricevere pi&ugrave; promemoria togli il cuore dal bene o scrivici a info@cronoaste.it.</p></div>';
-  const text = 'Ciao,\n\nti ricordiamo che il termine per depositare l\'offerta per questo bene scade il ' + quando + ': ' + titolo + (trib ? ' (' + trib + ')' : '') + '.\n\nVai alla scheda del bene: ' + link + '\n\nQuesta email e\' solo un promemoria: cronoaste.cloud e\' un sito vetrina e non si possono presentare offerte da qui. Per partecipare vai alla pagina della vendita sul portale (https://cronoaste.fallcoaste.it) e segui le indicazioni della vendita.\n\nSe hai bisogno di assistenza scrivici a info@cronoaste.it, chiamaci o scrivici su WhatsApp al 350 138 9723: ti aiutiamo gratuitamente per le vendite gestite da noi.\n\nPer non ricevere piu\' promemoria togli il cuore dal bene o scrivici a info@cronoaste.it.';
+    + '<p style="color:#5a6b82;font-size:13px">Ricevi questa email perch&eacute; hai chiesto i promemoria sul tuo account di cronoaste.cloud. <a href="' + esc(disattiva) + '">Disattiva i promemoria</a> con un clic, oppure togli il cuore dal bene o scrivici a info@cronoaste.it.</p></div>';
+  const text = 'Ciao,\n\nti ricordiamo che il termine per depositare l\'offerta per questo bene scade il ' + quando + ': ' + titolo + (trib ? ' (' + trib + ')' : '') + '.\n\nVai alla scheda del bene: ' + link + '\n\nQuesta email e\' solo un promemoria: cronoaste.cloud e\' un sito vetrina e non si possono presentare offerte da qui. Per partecipare vai alla pagina della vendita sul portale (https://cronoaste.fallcoaste.it) e segui le indicazioni della vendita.\n\nSe hai bisogno di assistenza scrivici a info@cronoaste.it, chiamaci o scrivici su WhatsApp al 350 138 9723: ti aiutiamo gratuitamente per le vendite gestite da noi.\n\nRicevi questa email perche\' hai chiesto i promemoria sul tuo account di cronoaste.cloud. Per disattivarli con un clic: ' + disattiva + ' (oppure togli il cuore dal bene o scrivici a info@cronoaste.it).';
   return { html, text };
 }
 export async function onRequestPost({ request, env }) {
@@ -59,8 +59,9 @@ export async function onRequestPost({ request, env }) {
     const data = p2(o.day) + '/' + p2(o.month) + '/' + o.year, quando = data + ' alle ' + p2(o.hour) + ':' + p2(o.minute);
     daInviare++;
     if (prova) continue;
-    const { html, text } = messaggio(l ? { t: l.titolo, tr: l.tribunale } : it, link, quando);
-    const ok = await brevo(env, { to: r.email, subject: 'Promemoria: il deposito per il bene che hai salvato scade il ' + data, html, text });
+    const disattiva = SITO + '/api/disattiva?u=' + r.utente_id + '&t=' + (await firma(env, 'disattiva:' + r.utente_id));
+    const { html, text } = messaggio(l ? { t: l.titolo, tr: l.tribunale } : it, link, quando, disattiva);
+    const ok = await brevo(env, { to: r.email, subject: 'Promemoria: il deposito per il bene che hai salvato scade il ' + data, html, text, headers: { 'List-Unsubscribe': '<' + disattiva + '>', 'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click' } });
     if (ok) {
       inviati++;
       await env.DB.prepare('INSERT OR IGNORE INTO inviati (utente_id, bene_id, soglia, quando) VALUES (?, ?, ?, ?)').bind(r.utente_id, r.bene_id, giorni, Math.floor(ora / 1000)).run();
