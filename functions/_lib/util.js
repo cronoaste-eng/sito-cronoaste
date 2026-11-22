@@ -1,6 +1,8 @@
 // Funzioni comuni per l'account (D1 binding "DB", secret BREVO_API_KEY_2).
 export const SITO = 'https://cronoaste.cloud';
 export const COOKIE = 'ca_sess';
+export const RITORNO = SITO + '/api/google-ritorno';
+export const attivo = env => !!(env.DB && env.GOOGLE_CLIENT_ID && env.GOOGLE_CLIENT_SECRET); // accesso con Google configurato
 const SESSIONE_S = 60 * 60 * 24 * 180; // 6 mesi
 
 export const json = (obj, st, extra) => new Response(JSON.stringify(obj), { status: st || 200, headers: Object.assign({ 'content-type': 'application/json', 'cache-control': 'no-store' }, extra || {}) });

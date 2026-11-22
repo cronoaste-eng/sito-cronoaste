@@ -51,7 +51,24 @@ if(f){
       es.className='esito '+(j.ok?'ok':'ko');es.textContent=j.msg||(j.ok?'Fatto.':'Errore.');sb.disabled=false;
       if(j.ok){f.reset();t0.value=Date.now()}
     }).catch(function(){es.className='esito ko';es.textContent='Connessione non riuscita. Riprova.';sb.disabled=false})});
-  var p=new URLSearchParams(location.search),tk=p.get('t');
+  // Accesso con Google: il pulsante compare solo se il servizio e' attivo; si naviga con un normale collegamento (nessuno script di Google).
+  var gb=document.getElementById('acc-google-box'),ga=document.getElementById('acc-google'),ge=document.getElementById('acc-google-esito');
+  if(gb&&ga)api('GET','/api/google?stato=1').then(function(j){if(j.ok)gb.hidden=false}).catch(function(){});
+  if(ga)ga.addEventListener('click',function(e){
+    if(!f.consenso.checked){e.preventDefault();ge.className='esito ko';ge.textContent='Spunta prima la presa visione dell\'informativa privacy.';return}
+    ga.setAttribute('href','/api/google'+(f.promemoria&&f.promemoria.checked?'?p=1':''))});
+  var p=new URLSearchParams(location.search),tk=p.get('t'),g=p.get('g');
+  if(g==='err'){try{history.replaceState(null,'','/accedi/')}catch(x){}es.className='esito ko';es.textContent='Accesso con Google non riuscito. Riprova oppure usa il link via email.'}
+  if(g==='ok'){try{history.replaceState(null,'','/accedi/')}catch(x){}
+    api('GET','/api/preferiti').then(function(j){
+      if(!j.ok){es.className='esito ko';es.textContent='Accesso non riuscito. Riprova.';return}
+      lsSet(FL,JSON.stringify({e:j.email}));menu();
+      var ids={},uni=[];(j.items||[]).concat(locali()).forEach(function(x){if(x&&x.id&&!ids[x.id]){ids[x.id]=1;uni.push(x)}});
+      scriviLocale(uni);
+      return api('PUT','/api/preferiti',{items:uni}).then(function(){
+        document.getElementById('acc-form-box').hidden=true;document.getElementById('acc-ok').hidden=false;
+        document.getElementById('acc-ok-txt').textContent='Accesso effettuato come '+j.email+'. '+(uni.length?'Beni salvati nel tuo account: '+uni.length+'.':'Tocca il cuore sui beni per salvarli nel tuo account.')})
+    }).catch(function(){es.className='esito ko';es.textContent='Connessione non riuscita. Riprova.'})}
   if(tk&&/^[0-9a-f]{64}$/.test(tk)){
     try{history.replaceState(null,'','/accedi/')}catch(x){}
     document.getElementById('acc-form-box').hidden=true;document.getElementById('acc-conferma').hidden=false;

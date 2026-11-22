@@ -7,6 +7,11 @@ css: /css/pagine.css
 <section class="eroe"><div class="contenitore"><h1>Registrati / Accedi</h1><p class="sotto">Nessuna password: ti mandiamo un link via email. Con l'account ritrovi i beni salvati con il cuore da qualsiasi dispositivo e, se vuoi, ricevi un promemoria prima della scadenza del deposito.</p></div></section>
 <section><div class="contenitore"><div class="acc-box">
 <div id="acc-form-box">
+<div id="acc-google-box" hidden>
+<a class="btn verde" id="acc-google" href="/api/google" rel="nofollow">Continua con Google</a>
+<p class="nota">Riceviamo solo la tua email. Spunta prima le caselle qui sotto. <strong>Oppure</strong> ricevi un link via email:</p>
+<p class="esito" id="acc-google-esito" role="status" aria-live="polite"></p>
+</div>
 <form class="modulo" id="acc-form" novalidate>
 <input type="hidden" name="t0" value="">
 <div class="trappola" aria-hidden="true"><label>Non compilare<input type="text" name="sito_web" tabindex="-1" autocomplete="off"></label></div>
