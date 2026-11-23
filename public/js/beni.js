@@ -142,7 +142,7 @@
     try{
       var b=e.target.closest&&e.target.closest('.sc-fr');
       if(b){pausaScad(6000);var t=scadEl.querySelector('.sc-track'),dir=+b.getAttribute('data-sc');
-        t.scrollBy({left:dir*t.clientWidth*0.8,behavior:'smooth'});return}
+        t.scrollBy({left:dir*t.clientWidth*0.8,behavior:(window.matchMedia&&window.matchMedia('(prefers-reduced-motion:reduce)').matches)?'auto':'smooth'});return}
       var c=e.target.closest&&e.target.closest('.ca-card');
       if(c&&typeof window.gtag==='function')window.gtag('event','clic_bene',{tribunale:c.getAttribute('data-tr')||'n.d.',procedura:c.getAttribute('data-pr')||'n.d.',sezione:'in_scadenza',posizione:Array.prototype.indexOf.call(c.parentNode.children,c)%(+c.parentNode.getAttribute('data-n')||99)+1,transport_type:'beacon'});
     }catch(x){}
