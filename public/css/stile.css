@@ -152,3 +152,6 @@ body:has(#cc) .wa-chat{display:none}
 .acc-sub a:hover,.acc-sub button:hover{background:#e6eef8;color:#2f5f9e}
 .menu.aperto .acc-sub{position:static;box-shadow:none;border:0;border-left:3px solid var(--bordo);border-radius:0;margin:2px 0 6px 12px;padding:0 0 0 6px;min-width:0}
 .menu.aperto .acc-sub a,.menu.aperto .acc-sub button{font-size:16px;padding:12px 8px}
+
+/* telefono: testata piu' bassa per lasciare spazio ai contenuti */
+@media(max-width:979px){.testata .contenitore{height:70px}.marchio img{height:60px}.menu.aperto{top:70px}}
